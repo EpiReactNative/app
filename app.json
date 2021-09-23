@@ -1,0 +1,11 @@
+{
+  "expo": {
+    "name": "InstaLike",
+    "slug": "InstaLike",
+    "version": "1.0.0",
+    "assetBundlePatterns": [
+      "**/*"
+    ]
+  },
+  "name": "InstaLike"
+}
