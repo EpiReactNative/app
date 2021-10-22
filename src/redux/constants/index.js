@@ -1,3 +1,0 @@
-const USER_STATE_CHANGE = 'USER_STATE_CHANGE';
-
-export default USER_STATE_CHANGE;
