@@ -19,10 +19,13 @@ function login(dispatch, username, password) {
 }
 
 function register(username, email, password) {
+  const formData = new FormData();
+  formData.append('username', username);
+  formData.append('email', email);
+  formData.append('password', password);
   const requestOptions = {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ username, email, password }),
+    body: formData,
   };
 
   return fetch('http://127.0.0.1:8000/user/', requestOptions)
