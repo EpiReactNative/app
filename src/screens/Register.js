@@ -51,6 +51,7 @@ function RegisterScreen() {
     setisLoading(true);
     authenticationActions.register(inputs.username, inputs.email, inputs.password)
       .then(() => {
+        navigation.navigate('Login');
       })
       .catch(() => {
         setError('Une erreur est survenue');
