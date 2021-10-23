@@ -1,18 +1,19 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { MaterialIcons } from '@expo/vector-icons';
 import AppLoading from 'expo-app-loading';
+import PropTypes from 'prop-types';
 /* eslint-disable camelcase */
 import { useFonts, LeckerliOne_400Regular } from '@expo-google-fonts/leckerli-one';
-import { useNavigation } from '@react-navigation/native';
 import { useDispatch } from 'react-redux';
 import {
-  Button, Stack, Center, NativeBaseProvider, Input, Icon, Text, Collapse, VStack, HStack, Alert,
-  CloseIcon, IconButton,
+  Button, useToast, Stack, Center, NativeBaseProvider, Input, Icon, Text, Collapse, VStack, HStack,
+  Alert, CloseIcon, IconButton,
 } from 'native-base';
 import authenticationActions from '../redux/actions/authentication';
 
-function LoginScreen() {
+function LoginScreen({ route, navigation }) {
   const dispatch = useDispatch();
+  const toast = useToast();
   const [inputs, setInputs] = useState({
     username: 'admin',
     password: 'admin',
@@ -20,10 +21,19 @@ function LoginScreen() {
   const [error, setError] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [isLoggingIn, setisLoggingIn] = useState(false);
-  const navigation = useNavigation();
   const [fontsLoaded] = useFonts({
     LeckerliOne_400Regular,
   });
+
+  useEffect(() => {
+    if (route.params && route.params.registerSuccess) {
+      toast.show({
+        title: 'Inscription réussie',
+        status: 'success',
+        placement: 'top',
+      });
+    }
+  }, [route.params]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleClick = () => setShowPassword(!showPassword);
 
@@ -132,10 +142,52 @@ function LoginScreen() {
   );
 }
 
-export default () => (
+const Provider = ({ route, navigation }) => (
   <NativeBaseProvider>
     <Center flex={1} px="10">
-      <LoginScreen />
+      <LoginScreen route={route} navigation={navigation} />
     </Center>
   </NativeBaseProvider>
 );
+
+export default Provider;
+
+Provider.propTypes = {
+  route: PropTypes.shape({
+    params: PropTypes.shape({
+      user: PropTypes.objectOf(PropTypes.object),
+    }),
+  }).isRequired,
+  navigation: PropTypes.shape({
+    dispatch: PropTypes.func.isRequired,
+    goBack: PropTypes.func.isRequired,
+    navigate: PropTypes.func.isRequired,
+    setParams: PropTypes.func.isRequired,
+    state: PropTypes.shape({
+      key: PropTypes.string.isRequired,
+      routeName: PropTypes.string.isRequired,
+      path: PropTypes.string,
+      params: PropTypes.objectOf(PropTypes.object),
+    }),
+  }).isRequired,
+};
+
+LoginScreen.propTypes = {
+  route: PropTypes.shape({
+    params: PropTypes.shape({
+      registerSuccess: PropTypes.bool,
+    }),
+  }).isRequired,
+  navigation: PropTypes.shape({
+    dispatch: PropTypes.func.isRequired,
+    goBack: PropTypes.func.isRequired,
+    navigate: PropTypes.func.isRequired,
+    setParams: PropTypes.func.isRequired,
+    state: PropTypes.shape({
+      key: PropTypes.string.isRequired,
+      routeName: PropTypes.string.isRequired,
+      path: PropTypes.string,
+      params: PropTypes.objectOf(PropTypes.object),
+    }),
+  }).isRequired,
+};
