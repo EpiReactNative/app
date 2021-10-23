@@ -3,14 +3,14 @@ import { MaterialIcons } from '@expo/vector-icons';
 import AppLoading from 'expo-app-loading';
 /* eslint-disable camelcase */
 import { useFonts, LeckerliOne_400Regular } from '@expo-google-fonts/leckerli-one';
-import { useNavigation } from '@react-navigation/native';
+import PropTypes from 'prop-types';
 import {
   Button, Stack, Center, NativeBaseProvider, Input, Icon, Text, Collapse, VStack, HStack, Alert,
   CloseIcon, IconButton,
 } from 'native-base';
 import authenticationActions from '../redux/actions/authentication';
 
-function RegisterScreen() {
+function RegisterScreen({ navigation }) {
   const [inputs, setInputs] = useState({
     username: 'test',
     email: 'test@test.com',
@@ -19,7 +19,6 @@ function RegisterScreen() {
   const [error, setError] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setisLoading] = useState(false);
-  const navigation = useNavigation();
   const [fontsLoaded] = useFonts({
     LeckerliOne_400Regular,
   });
@@ -47,11 +46,11 @@ function RegisterScreen() {
 
   const handleSubmit = () => {
     if (!handleValidation()) return;
-    setError('false');
+    setError('');
     setisLoading(true);
     authenticationActions.register(inputs.username, inputs.email, inputs.password)
       .then(() => {
-        navigation.navigate('Login');
+        navigation.navigate('Login', { registerSuccess: true });
       })
       .catch(() => {
         setError('Une erreur est survenue');
@@ -94,7 +93,7 @@ function RegisterScreen() {
               <IconButton
                 variant="unstyled"
                 icon={<CloseIcon size="3" color="coolGray.600" />}
-                onPress={() => setError(false)}
+                onPress={() => setError('')}
               />
             </HStack>
           </VStack>
@@ -173,10 +172,47 @@ function RegisterScreen() {
   );
 }
 
-export default () => (
+const Provider = ({ route, navigation }) => (
   <NativeBaseProvider>
     <Center flex={1} px="10">
-      <RegisterScreen />
+      <RegisterScreen route={route} navigation={navigation} />
     </Center>
   </NativeBaseProvider>
 );
+
+export default Provider;
+
+Provider.propTypes = {
+  route: PropTypes.shape({
+    params: PropTypes.shape({
+      user: PropTypes.objectOf(PropTypes.object),
+    }),
+  }).isRequired,
+  navigation: PropTypes.shape({
+    dispatch: PropTypes.func.isRequired,
+    goBack: PropTypes.func.isRequired,
+    navigate: PropTypes.func.isRequired,
+    setParams: PropTypes.func.isRequired,
+    state: PropTypes.shape({
+      key: PropTypes.string.isRequired,
+      routeName: PropTypes.string.isRequired,
+      path: PropTypes.string,
+      params: PropTypes.objectOf(PropTypes.object),
+    }),
+  }).isRequired,
+};
+
+RegisterScreen.propTypes = {
+  navigation: PropTypes.shape({
+    dispatch: PropTypes.func.isRequired,
+    goBack: PropTypes.func.isRequired,
+    navigate: PropTypes.func.isRequired,
+    setParams: PropTypes.func.isRequired,
+    state: PropTypes.shape({
+      key: PropTypes.string.isRequired,
+      routeName: PropTypes.string.isRequired,
+      path: PropTypes.string,
+      params: PropTypes.objectOf(PropTypes.object),
+    }),
+  }).isRequired,
+};
