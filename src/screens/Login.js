@@ -4,23 +4,22 @@ import AppLoading from 'expo-app-loading';
 import PropTypes from 'prop-types';
 /* eslint-disable camelcase */
 import { useFonts, LeckerliOne_400Regular } from '@expo-google-fonts/leckerli-one';
-import { useDispatch } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import {
-  Button, useToast, Stack, Center, NativeBaseProvider, Input, Icon, Text, Collapse, VStack, HStack,
-  Alert, CloseIcon, IconButton,
+  Button, useToast, Stack, Center, NativeBaseProvider, Input, Icon, Text,
 } from 'native-base';
-import authenticationActions from '../redux/actions/authentication';
+import { authenticationActions } from '../redux/actions';
+import { authenticationConstants } from '../redux/constants';
 
 function LoginScreen({ route, navigation }) {
   const dispatch = useDispatch();
+  const isLoggingIn = useSelector((state) => state.authentication.isLoggingIn);
   const toast = useToast();
   const [inputs, setInputs] = useState({
     username: 'admin',
     password: 'admin',
   });
-  const [error, setError] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
-  const [isLoggingIn, setisLoggingIn] = useState(false);
   const [fontsLoaded] = useFonts({
     LeckerliOne_400Regular,
   });
@@ -38,14 +37,16 @@ function LoginScreen({ route, navigation }) {
   const handleClick = () => setShowPassword(!showPassword);
 
   const handleSubmit = () => {
-    setError(false);
-    setisLoggingIn(true);
-    authenticationActions.login(dispatch, inputs.username, inputs.password)
+    authenticationActions.login(inputs.username, inputs.password)
       .then(() => {
       })
       .catch(() => {
-        setError(true);
-        setisLoggingIn(false);
+        dispatch({ type: authenticationConstants.LOGIN_FAILURE });
+        toast.show({
+          title: 'Impossible de se connecter',
+          status: 'error',
+          placement: 'top',
+        });
       });
   };
 
@@ -60,36 +61,6 @@ function LoginScreen({ route, navigation }) {
       >
         Epigram
       </Text>
-      <Collapse isOpen={error}>
-        <Alert w="100%" status="error">
-          <VStack space={1} flexShrink={1} w="100%">
-            <HStack
-              flexShrink={1}
-              space={2}
-              alignItems="center"
-              justifyContent="space-between"
-            >
-              <HStack flexShrink={1} space={2} alignItems="center">
-                <Alert.Icon />
-                <Text
-                  fontSize="md"
-                  fontWeight="medium"
-                  _dark={{
-                    color: 'coolGray.800',
-                  }}
-                >
-                  Une erreur est survenue
-                </Text>
-              </HStack>
-              <IconButton
-                variant="unstyled"
-                icon={<CloseIcon size="3" color="coolGray.600" />}
-                onPress={() => setError(false)}
-              />
-            </HStack>
-          </VStack>
-        </Alert>
-      </Collapse>
       <Input
         size="lg"
         w="100%"
@@ -124,7 +95,7 @@ function LoginScreen({ route, navigation }) {
         placeholder="Mot de passe"
         onChangeText={(value) => setInputs(() => ({ ...inputs, password: value }))}
       />
-      <Button w="100%" size="lg" isLoggingIn={isLoggingIn} colorScheme="primary" onPress={handleSubmit} isDisabled={!inputs.username || !inputs.password}>
+      <Button w="100%" size="lg" isLoading={isLoggingIn} colorScheme="primary" onPress={handleSubmit} isDisabled={!inputs.username || !inputs.password}>
         Connexion
       </Button>
       <Stack direction="row" alignItems="center">

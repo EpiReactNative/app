@@ -1,12 +1,23 @@
-const initialState = {
-  isLoggedIn: false,
-  token: null,
-};
+import { authenticationConstants } from '../constants';
 
-const user = (state = initialState, action) => ({
-  ...state,
-  isLoggedIn: action.isLoggedIn,
-  token: action.token,
-});
+function authentication(state = {}, action) {
+  switch (action.type) {
+    case authenticationConstants.LOGIN_REQUEST:
+      return {
+        isLoggingIn: true,
+      };
+    case authenticationConstants.LOGIN_SUCCESS:
+      return {
+        isLoggedIn: true,
+        token: action.token,
+      };
+    case authenticationConstants.LOGIN_FAILURE:
+      return {};
+    case authenticationConstants.LOGOUT:
+      return {};
+    default:
+      return state;
+  }
+}
 
-export default user;
+export default authentication;

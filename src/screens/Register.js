@@ -5,18 +5,17 @@ import AppLoading from 'expo-app-loading';
 import { useFonts, LeckerliOne_400Regular } from '@expo-google-fonts/leckerli-one';
 import PropTypes from 'prop-types';
 import {
-  Button, Stack, Center, NativeBaseProvider, Input, Icon, Text, Collapse, VStack, HStack, Alert,
-  CloseIcon, IconButton,
+  Button, Stack, Center, NativeBaseProvider, Input, Icon, Text, useToast,
 } from 'native-base';
-import authenticationActions from '../redux/actions/authentication';
+import { authenticationActions } from '../redux/actions';
 
 function RegisterScreen({ navigation }) {
+  const toast = useToast();
   const [inputs, setInputs] = useState({
     username: 'test',
     email: 'test@test.com',
     password: 'test',
   });
-  const [error, setError] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setisLoading] = useState(false);
   const [fontsLoaded] = useFonts({
@@ -26,7 +25,6 @@ function RegisterScreen({ navigation }) {
   const handleClick = () => setShowPassword(!showPassword);
 
   const handleValidation = () => {
-    setError('');
     const lastAtPos = inputs.email.lastIndexOf('@');
     const lastDotPos = inputs.email.lastIndexOf('.');
     if (
@@ -38,7 +36,11 @@ function RegisterScreen({ navigation }) {
         && inputs.email.length - lastDotPos > 2
       )
     ) {
-      setError('Email incorrect.');
+      toast.show({
+        title: 'Email invalide',
+        status: 'error',
+        placement: 'top',
+      });
       return false;
     }
     return true;
@@ -46,15 +48,18 @@ function RegisterScreen({ navigation }) {
 
   const handleSubmit = () => {
     if (!handleValidation()) return;
-    setError('');
     setisLoading(true);
     authenticationActions.register(inputs.username, inputs.email, inputs.password)
       .then(() => {
         navigation.navigate('Login', { registerSuccess: true });
       })
       .catch(() => {
-        setError('Une erreur est survenue');
         setisLoading(false);
+        toast.show({
+          title: 'Une erreur est survenue',
+          status: 'error',
+          placement: 'top',
+        });
       });
   };
 
@@ -69,36 +74,6 @@ function RegisterScreen({ navigation }) {
       >
         Epigram
       </Text>
-      <Collapse isOpen={error}>
-        <Alert w="100%" status="error">
-          <VStack space={1} flexShrink={1} w="100%">
-            <HStack
-              flexShrink={1}
-              space={2}
-              alignItems="center"
-              justifyContent="space-between"
-            >
-              <HStack flexShrink={1} space={2} alignItems="center">
-                <Alert.Icon />
-                <Text
-                  fontSize="md"
-                  fontWeight="medium"
-                  _dark={{
-                    color: 'coolGray.800',
-                  }}
-                >
-                  {error}
-                </Text>
-              </HStack>
-              <IconButton
-                variant="unstyled"
-                icon={<CloseIcon size="3" color="coolGray.600" />}
-                onPress={() => setError('')}
-              />
-            </HStack>
-          </VStack>
-        </Alert>
-      </Collapse>
       <Input
         size="lg"
         w="100%"

@@ -12,12 +12,17 @@
     "@expo-google-fonts/dev": "^0.2.0",
     "@expo-google-fonts/leckerli-one": "^0.2.0",
     "@expo/vector-icons": "^12.0.5",
+    "@react-native-async-storage/async-storage": "^1.15.9",
+    "@react-navigation/bottom-tabs": "^6.0.9",
     "@react-navigation/native": "^6.0.6",
     "@react-navigation/native-stack": "^6.2.5",
     "expo": "~43.0.0",
     "expo-app-loading": "~1.2.1",
     "expo-font": "~10.0.3",
+    "expo-image-picker": "^11.0.3",
+    "expo-secure-store": "~11.0.3",
     "expo-status-bar": "~1.1.0",
+    "lodash": "^4.17.21",
     "native-base": "^3.2.1",
     "prop-types": "^15.7.2",
     "react": "17.0.1",
@@ -33,7 +38,7 @@
     "redux-thunk": "^2.3.0",
     "styled-components": "^5.3.3",
     "styled-system": "^5.1.5",
-    "expo-secure-store": "~11.0.3"
+    "use-async-effect": "^2.2.3"
   },
   "devDependencies": {
     "babel-eslint": "^10.1.0",

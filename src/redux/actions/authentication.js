@@ -1,19 +1,29 @@
-function login(dispatch, username, password) {
+import store from '../helpers/store';
+import { authenticationConstants } from '../constants';
+import asyncStorageMethods from '../helpers/async-storage';
+
+const SERVER_URL = 'http://localhost:8000';
+// const SERVER_URL = 'https://epigrambe.herokuapp.com';
+
+function login(username, password) {
   const requestOptions = {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ username, password }),
   };
 
-  return fetch('http://127.0.0.1:8000/api-token-auth/', requestOptions)
+  store.dispatch({ type: authenticationConstants.LOGIN_REQUEST });
+  return fetch(`${SERVER_URL}/api-token-auth/`, requestOptions)
     .then(async (response) => {
       if (response.ok) {
         return response.json();
       }
+      store.dispatch({ type: authenticationConstants.LOGIN_FAILURE });
       return response.text().then((text) => { throw new Error(text); });
     })
     .then((data) => {
-      dispatch({ type: 'USER_STATE_CHANGE', isLoggedIn: true, token: data.token });
+      asyncStorageMethods.setStorage('token', data.token);
+      store.dispatch({ type: authenticationConstants.LOGIN_SUCCESS, token: data.token });
       return data;
     });
 }
@@ -28,7 +38,7 @@ function register(username, email, password) {
     body: formData,
   };
 
-  return fetch('http://127.0.0.1:8000/user/', requestOptions)
+  return fetch(`${SERVER_URL}/user/`, requestOptions)
     .then(async (response) => {
       if (response.ok) {
         return response.json();
@@ -38,9 +48,15 @@ function register(username, email, password) {
     .then((data) => data);
 }
 
+function logout() {
+  asyncStorageMethods.removeStorage('token');
+  store.dispatch({ type: authenticationConstants.LOGOUT });
+}
+
 const authenticationActions = {
   login,
   register,
+  logout,
 };
 
 export default authenticationActions;
