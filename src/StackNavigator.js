@@ -1,8 +1,9 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
+import { useAsyncEffect } from 'use-async-effect';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { useAsyncEffect } from 'use-async-effect';
+import AppLoading from 'expo-app-loading';
 import TabNavigator from './TabNavigator';
 import asyncStorageMethods from './redux/helpers/async-storage';
 import { authenticationConstants } from './redux/constants';
@@ -13,12 +14,20 @@ const Stack = createNativeStackNavigator();
 function Navigation() {
   const dispatch = useDispatch();
   const { isLoggedIn } = useSelector((state) => state.authentication);
+  const [mounted, setMounted] = useState(false);
 
   useAsyncEffect(async (isMounted) => {
-    const token = await asyncStorageMethods.getStorage('token');
-    if (isMounted() && token) dispatch({ type: authenticationConstants.LOGIN_SUCCESS, token });
+    if (isMounted()) {
+      asyncStorageMethods.getStorage('token').then((token) => {
+        if (token) dispatch({ type: authenticationConstants.LOGIN_SUCCESS, token });
+        if (isMounted()) setMounted(true);
+      });
+    }
   }, []);
 
+  if (!mounted) {
+    return <AppLoading />;
+  }
   return (
     <NavigationContainer>
       {isLoggedIn ? (

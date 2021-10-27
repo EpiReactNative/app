@@ -2,8 +2,8 @@ import store from '../helpers/store';
 import { authenticationConstants } from '../constants';
 import asyncStorageMethods from '../helpers/async-storage';
 
-const SERVER_URL = 'http://localhost:8000';
-// const SERVER_URL = 'https://epigrambe.herokuapp.com';
+// const SERVER_URL = 'http://localhost:8000';
+const SERVER_URL = 'https://epigrambe.herokuapp.com';
 
 function login(username, password) {
   const requestOptions = {
@@ -18,24 +18,24 @@ function login(username, password) {
       if (response.ok) {
         return response.json();
       }
-      store.dispatch({ type: authenticationConstants.LOGIN_FAILURE });
-      return response.text().then((text) => { throw new Error(text); });
+      throw new Error(response);
     })
     .then((data) => {
       asyncStorageMethods.setStorage('token', data.token);
       store.dispatch({ type: authenticationConstants.LOGIN_SUCCESS, token: data.token });
       return data;
+    })
+    .catch((error = undefined) => {
+      store.dispatch({ type: authenticationConstants.LOGIN_FAILURE });
+      throw new Error(error);
     });
 }
 
 function register(username, email, password) {
-  const formData = new FormData();
-  formData.append('username', username);
-  formData.append('email', email);
-  formData.append('password', password);
   const requestOptions = {
     method: 'POST',
-    body: formData,
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ username, email, password }),
   };
 
   return fetch(`${SERVER_URL}/user/`, requestOptions)
@@ -43,9 +43,12 @@ function register(username, email, password) {
       if (response.ok) {
         return response.json();
       }
-      return response.text().then((text) => { throw new Error(text); });
+      throw new Error(response);
     })
-    .then((data) => data);
+    .then((data) => data)
+    .catch((error = undefined) => {
+      throw new Error(error);
+    });
 }
 
 function logout() {

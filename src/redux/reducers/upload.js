@@ -18,7 +18,9 @@ function authentication(state = {}, action) {
         isUploaded: true,
       };
     case uploadConstants.UPLOAD_FAILURE:
-      return {};
+      return {
+        ...state,
+      };
     case uploadConstants.UPLOAD_CLEAR:
       return {};
     default:

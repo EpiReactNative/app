@@ -13,7 +13,7 @@ import {
 
 const Tab = createBottomTabNavigator();
 
-function TabNavigator({ stackRoute, navigation }) {
+function TabNavigator() {
   const [fontsLoaded] = useFonts({
     LeckerliOne_400Regular,
   });
@@ -56,15 +56,8 @@ function TabNavigator({ stackRoute, navigation }) {
             fontSize: 30,
           },
         }}
-        route={stackRoute}
-        navigation={navigation}
       />
-      <Tab.Screen
-        name="Discover"
-        component={DiscoverScreen}
-        route={stackRoute}
-        navigation={navigation}
-      />
+      <Tab.Screen name="Discover" component={DiscoverScreen} />
       <Tab.Screen name="UploadStackScreen" component={UploadStackScreen} options={{ headerShown: false }} />
       <Tab.Screen name="Profil" component={ProfilScreen} />
     </Tab.Navigator>

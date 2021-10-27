@@ -1,61 +1,130 @@
-import * as React from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
+import { useAsyncEffect } from 'use-async-effect';
+import { Dimensions, RefreshControl, SafeAreaView, ScrollView, StyleSheet } from 'react-native';
 import {
-  Button, Stack, Center, NativeBaseProvider, Text,
+  Stack, Text, Toast, Center, Heading, Spinner, HStack, Box, Image,
 } from 'native-base';
-import { authenticationActions } from '../redux/actions';
+import { postActions } from '../redux/actions';
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+  scrollView: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+});
 
 function HomeScreen() {
-  const handleLogout = () => {
-    authenticationActions.logout();
-  };
+  const [mounted, setMounted] = useState(false);
+  const [posts, setPosts] = useState([]);
+  // const getImageSize = (image) => {
+  //   const { width } = Dimensions.get('window');
+  //   const height = image.offsetHeight / (image.offsetWidth / width);
+  //   return { width, height };
+  // };
+
+  const [refreshing, setRefreshing] = React.useState(false);
+
+  const onRefresh = React.useCallback(() => {
+    setRefreshing(true);
+    postActions.getPosts()
+      .then((data) => {
+        setPosts(data);
+      })
+      .catch(() => {
+        Toast.show({
+          title: 'Une erreur est survenue',
+          status: 'error',
+          placement: 'top',
+        });
+      })
+      .then(() => setRefreshing(false));
+  }, []);
+
+  useAsyncEffect(async (isMounted) => {
+    if (isMounted()) {
+      postActions.getPosts().then((data) => {
+        console.log(data);
+        setPosts(data);
+        if (isMounted()) setMounted(true);
+      }).catch(() => {
+        Toast.show({
+          title: 'Une erreur est survenue',
+          status: 'error',
+          placement: 'top',
+        });
+      });
+    }
+  }, []);
+
+  if (!mounted) {
+    return (
+      <Center flex={1} px="10">
+        <HStack space={2} alignItems="center">
+          <Spinner accessibilityLabel="Loading posts" color="#06B6D4" />
+          <Heading color="#06B6D4" fontSize="md">
+            Chargement
+          </Heading>
+        </HStack>
+      </Center>
+    );
+  }
+
+  // return (
+  //   <Stack w="100%">
+  //     {posts.map((post) => (
+  //       <Box key={post.id} w="100%" mb="4">
+  //         <Text>{post.author}</Text>
+  //         <Image
+  //           resizeMode="cover"
+  //           source={{ uri: post.image }}
+  //           alt="Post Image"
+  //           width={Dimensions.get('window').width}
+  //           height={Dimensions.get('window').width}
+  //         // width={getImageSize().width}
+  //         // height={getImageSize().height}
+  //         />
+  //       </Box>
+  //     ))}
+  //   </Stack>
+  // );
 
   return (
-    <Stack space={4} w="100%" alignItems="center">
-      <Text>Home Screen</Text>
-      <Button onPress={handleLogout}>
-        Déconnexion
-      </Button>
-    </Stack>
+    <SafeAreaView style={styles.container}>
+      <ScrollView
+        contentContainerStyle={styles.scrollView}
+        refreshControl={(
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+          />
+        )}
+      >
+        {posts.map((post) => (
+          <Box key={post.id} w="100%" mb="4">
+            <Text>{post.author}</Text>
+            <Image
+              resizeMode="cover"
+              source={{ uri: post.image }}
+              alt="Post Image"
+              width={Dimensions.get('window').width}
+              height={Dimensions.get('window').width}
+            // width={getImageSize().width}
+            // height={getImageSize().height}
+            />
+          </Box>
+        ))}
+      </ScrollView>
+    </SafeAreaView>
   );
 }
-
-const Provider = ({ route, navigation }) => (
-  <NativeBaseProvider>
-    <Center flex={1} px="10">
-      <HomeScreen route={route} navigation={navigation} />
-    </Center>
-  </NativeBaseProvider>
-);
-
-export default Provider;
-
-Provider.propTypes = {
-  route: PropTypes.shape({
-    params: PropTypes.shape({
-      user: PropTypes.objectOf(PropTypes.object),
-    }),
-  }).isRequired,
-  navigation: PropTypes.shape({
-    dispatch: PropTypes.func.isRequired,
-    goBack: PropTypes.func.isRequired,
-    navigate: PropTypes.func.isRequired,
-    setParams: PropTypes.func.isRequired,
-    state: PropTypes.shape({
-      key: PropTypes.string.isRequired,
-      routeName: PropTypes.string.isRequired,
-      path: PropTypes.string,
-      params: PropTypes.objectOf(PropTypes.object),
-    }),
-  }).isRequired,
-};
+export default HomeScreen;
 
 HomeScreen.propTypes = {
-  route: PropTypes.shape({
-    params: PropTypes.shape({
-      registerSuccess: PropTypes.bool,
-    }),
-  }).isRequired,
   navigation: PropTypes.shape({
     dispatch: PropTypes.func.isRequired,
     goBack: PropTypes.func.isRequired,
