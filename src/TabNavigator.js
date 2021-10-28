@@ -7,7 +7,7 @@ import { Ionicons } from '@expo/vector-icons';
 import {
   HomeScreen,
   DiscoverScreen,
-  UploadStackScreen,
+  UploadScreen,
   ProfilScreen,
 } from './screens';
 
@@ -38,8 +38,8 @@ function TabNavigator() {
           }
           return <Ionicons name={iconName} size={size} color={color} />;
         },
-        tabBarActiveTintColor: '#06B6D4',
-        tabBarInactiveTintColor: 'gray',
+        tabBarActiveTintColor: '#262626',
+        tabBarInactiveTintColor: '#262626',
       })}
     >
       <Tab.Screen
@@ -58,7 +58,7 @@ function TabNavigator() {
         }}
       />
       <Tab.Screen name="Discover" component={DiscoverScreen} />
-      <Tab.Screen name="UploadStackScreen" component={UploadStackScreen} options={{ headerShown: false }} />
+      <Tab.Screen name="UploadStackScreen" component={UploadScreen} options={{ headerShown: false }} />
       <Tab.Screen name="Profil" component={ProfilScreen} />
     </Tab.Navigator>
   );

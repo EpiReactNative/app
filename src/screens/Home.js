@@ -1,11 +1,14 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { useAsyncEffect } from 'use-async-effect';
-import { Dimensions, RefreshControl, SafeAreaView, ScrollView, StyleSheet } from 'react-native';
 import {
-  Stack, Text, Toast, Center, Heading, Spinner, HStack, Box, Image,
+  Dimensions, RefreshControl, SafeAreaView, ScrollView, StyleSheet,
+} from 'react-native';
+import {
+  Text, Toast, Box, Image,
 } from 'native-base';
 import { postActions } from '../redux/actions';
+import Loading from '../components/Loading';
 
 const styles = StyleSheet.create({
   container: {
@@ -20,14 +23,13 @@ const styles = StyleSheet.create({
 
 function HomeScreen() {
   const [mounted, setMounted] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
   const [posts, setPosts] = useState([]);
   // const getImageSize = (image) => {
   //   const { width } = Dimensions.get('window');
   //   const height = image.offsetHeight / (image.offsetWidth / width);
   //   return { width, height };
   // };
-
-  const [refreshing, setRefreshing] = React.useState(false);
 
   const onRefresh = React.useCallback(() => {
     setRefreshing(true);
@@ -62,16 +64,7 @@ function HomeScreen() {
   }, []);
 
   if (!mounted) {
-    return (
-      <Center flex={1} px="10">
-        <HStack space={2} alignItems="center">
-          <Spinner accessibilityLabel="Loading posts" color="#06B6D4" />
-          <Heading color="#06B6D4" fontSize="md">
-            Chargement
-          </Heading>
-        </HStack>
-      </Center>
-    );
+    return <Loading />;
   }
 
   // return (

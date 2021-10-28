@@ -8,7 +8,7 @@ import {
 } from 'native-base';
 import { uploadConstants } from '../../redux/constants';
 
-function PublicationScreen({ route }) {
+const PublicationScreen = ({ route }) => {
   const dispatch = useDispatch();
   const width = Dimensions.get('window').width - 80;
   const height = route.params.image.height / (route.params.image.width / width);
@@ -51,7 +51,7 @@ function PublicationScreen({ route }) {
         )}
     </Stack>
   );
-}
+};
 
 export default PublicationScreen;
 

@@ -6,8 +6,8 @@ import { Ionicons } from '@expo/vector-icons';
 import {
   Button, Stack, Icon, Spinner, useToast,
 } from 'native-base';
-import { postActions } from '../../redux/actions';
-import { UploadScreen, PublicationScreen } from '.';
+import { postActions } from '../redux/actions';
+import { FileScreen, PublicationScreen } from '../components/upload';
 
 const UploadStack = createNativeStackNavigator();
 
@@ -31,7 +31,7 @@ const UploadStackScreen = ({ navigation }) => {
 
   return (
     <UploadStack.Navigator>
-      <UploadStack.Screen name="Upload" component={UploadScreen} options={{ headerShown: false }} />
+      <UploadStack.Screen name="File" component={FileScreen} options={{ headerShown: false }} />
       <UploadStack.Screen
         name="Publication"
         component={PublicationScreen}

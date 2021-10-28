@@ -1,5 +1,7 @@
 import * as React from 'react';
-import { View, Text, Button } from 'react-native';
+import {
+  Button, Center, Text,
+} from 'native-base';
 import { authenticationActions } from '../redux/actions';
 
 function ProfilScreen() {
@@ -8,12 +10,16 @@ function ProfilScreen() {
   };
 
   return (
-    <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+    <Center flex={1} px="10">
       <Text>Profil Screen</Text>
-      <Button onPress={handleLogout}>
+      <Button
+        size="lg"
+        colorScheme="primary"
+        onPress={handleLogout}
+      >
         Déconnexion
       </Button>
-    </View>
+    </Center>
   );
 }
 
