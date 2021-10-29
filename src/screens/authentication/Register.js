@@ -7,7 +7,8 @@ import {
 import { useFonts, LeckerliOne_400Regular } from '@expo-google-fonts/leckerli-one';
 import { MaterialIcons } from '@expo/vector-icons';
 import AppLoading from 'expo-app-loading';
-import { authenticationActions } from '../redux/actions';
+import { authenticationActions } from '../../redux/actions';
+import toasts from '../../redux/helpers/toasts';
 
 function RegisterScreen({ navigation }) {
   const [inputs, setInputs] = useState({
@@ -47,11 +48,7 @@ function RegisterScreen({ navigation }) {
       })
       .catch(() => {
         setisLoading(false);
-        Toast.show({
-          title: 'Une erreur est survenue',
-          status: 'error',
-          placement: 'top',
-        });
+        Toast.show(toasts.globalError);
       });
   };
 

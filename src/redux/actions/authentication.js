@@ -1,9 +1,7 @@
 import store from '../helpers/store';
-import { authenticationConstants } from '../constants';
+import { authenticationConstants, userConstants } from '../constants';
 import asyncStorageMethods from '../helpers/async-storage';
-
-// const SERVER_URL = 'http://localhost:8000';
-const SERVER_URL = 'https://epigrambe.herokuapp.com';
+import { SERVER_URL } from '.';
 
 function login(username, password) {
   const requestOptions = {
@@ -54,6 +52,7 @@ function register(username, email, password) {
 function logout() {
   asyncStorageMethods.removeStorage('token');
   store.dispatch({ type: authenticationConstants.LOGOUT });
+  store.dispatch({ type: userConstants.USER_CLEAR });
 }
 
 const authenticationActions = {

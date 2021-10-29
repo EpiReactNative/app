@@ -108,7 +108,7 @@ const FileScreen = ({ navigation }) => {
             <Icon as={Ionicons} name="image-outline" size="lg" color="#262626" />
             <VStack ml="2" justify="flex-start" align="center">
               <Text color="#262626" semibold>Sélectionner depuis la Gallerie</Text>
-              <Text color="light.500" fontSize="xs">PNG, JPEG</Text>
+              <Text color="light.500" fontSize="xs">PNG, JPEG et GIF</Text>
             </VStack>
           </HStack>
         </Button>

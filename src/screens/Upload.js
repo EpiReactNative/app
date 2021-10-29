@@ -8,6 +8,7 @@ import {
 } from 'native-base';
 import { postActions } from '../redux/actions';
 import { FileScreen, PublicationScreen } from '../components/upload';
+import toasts from '../redux/helpers/toasts';
 
 const UploadStack = createNativeStackNavigator();
 
@@ -21,11 +22,7 @@ const UploadStackScreen = ({ navigation }) => {
       navigation.popToTop();
       navigation.navigate('Home');
     }).catch(() => {
-      toast.show({
-        title: 'Une erreur est survenue',
-        status: 'error',
-        placement: 'top',
-      });
+      toast.show(toasts.globalError);
     });
   };
 

@@ -40,6 +40,7 @@ function TabNavigator() {
         },
         tabBarActiveTintColor: '#262626',
         tabBarInactiveTintColor: '#262626',
+        headerShown: false,
       })}
     >
       <Tab.Screen
@@ -49,6 +50,7 @@ function TabNavigator() {
           title: 'Epigram',
           headerStyle: {
           },
+          headerShown: true,
           headerTintColor: '#000',
           headerTitleAlign: 'center',
           headerTitleStyle: {
@@ -58,7 +60,7 @@ function TabNavigator() {
         }}
       />
       <Tab.Screen name="Discover" component={DiscoverScreen} />
-      <Tab.Screen name="UploadStackScreen" component={UploadScreen} options={{ headerShown: false }} />
+      <Tab.Screen name="UploadStackScreen" component={UploadScreen} />
       <Tab.Screen name="Profil" component={ProfilScreen} />
     </Tab.Navigator>
   );

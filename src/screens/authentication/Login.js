@@ -8,7 +8,8 @@ import {
 import { useFonts, LeckerliOne_400Regular } from '@expo-google-fonts/leckerli-one';
 import { MaterialIcons } from '@expo/vector-icons';
 import AppLoading from 'expo-app-loading';
-import { authenticationActions } from '../redux/actions';
+import { authenticationActions } from '../../redux/actions';
+import toasts from '../../redux/helpers/toasts';
 
 function LoginScreen({ route, navigation }) {
   const isLoggingIn = useSelector((state) => state.authentication.isLoggingIn);
@@ -18,11 +19,7 @@ function LoginScreen({ route, navigation }) {
 
   useEffect(() => {
     if (route.params && route.params.registerSuccess) {
-      Toast.show({
-        title: 'Inscription réussie',
-        status: 'success',
-        placement: 'top',
-      });
+      Toast.show(toasts.registerSuccess);
     }
   }, [route.params]); // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -33,11 +30,7 @@ function LoginScreen({ route, navigation }) {
       .then(() => {
       })
       .catch(() => {
-        Toast.show({
-          title: 'Impossible de se connecter',
-          status: 'error',
-          placement: 'top',
-        });
+        Toast.show(toasts.loginFailed);
       });
   };
 

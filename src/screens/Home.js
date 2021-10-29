@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import PropTypes from 'prop-types';
 import { useAsyncEffect } from 'use-async-effect';
 import {
@@ -9,6 +9,7 @@ import {
 } from 'native-base';
 import { postActions } from '../redux/actions';
 import Loading from '../components/Loading';
+import toasts from '../redux/helpers/toasts';
 
 const styles = StyleSheet.create({
   container: {
@@ -31,18 +32,14 @@ function HomeScreen() {
   //   return { width, height };
   // };
 
-  const onRefresh = React.useCallback(() => {
+  const onRefresh = useCallback(() => {
     setRefreshing(true);
     postActions.getPosts()
       .then((data) => {
         setPosts(data);
       })
       .catch(() => {
-        Toast.show({
-          title: 'Une erreur est survenue',
-          status: 'error',
-          placement: 'top',
-        });
+        Toast.show(toasts.globalError);
       })
       .then(() => setRefreshing(false));
   }, []);
@@ -54,11 +51,7 @@ function HomeScreen() {
         setPosts(data);
         if (isMounted()) setMounted(true);
       }).catch(() => {
-        Toast.show({
-          title: 'Une erreur est survenue',
-          status: 'error',
-          placement: 'top',
-        });
+        Toast.show(toasts.globalError);
       });
     }
   }, []);
@@ -66,25 +59,6 @@ function HomeScreen() {
   if (!mounted) {
     return <Loading />;
   }
-
-  // return (
-  //   <Stack w="100%">
-  //     {posts.map((post) => (
-  //       <Box key={post.id} w="100%" mb="4">
-  //         <Text>{post.author}</Text>
-  //         <Image
-  //           resizeMode="cover"
-  //           source={{ uri: post.image }}
-  //           alt="Post Image"
-  //           width={Dimensions.get('window').width}
-  //           height={Dimensions.get('window').width}
-  //         // width={getImageSize().width}
-  //         // height={getImageSize().height}
-  //         />
-  //       </Box>
-  //     ))}
-  //   </Stack>
-  // );
 
   return (
     <SafeAreaView style={styles.container}>

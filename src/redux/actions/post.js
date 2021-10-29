@@ -1,9 +1,7 @@
 import store from '../helpers/store';
 import { uploadConstants } from '../constants';
 import authHeader from '../helpers/auth-header';
-
-// const SERVER_URL = 'http://localhost:8000';
-const SERVER_URL = 'https://epigrambe.herokuapp.com';
+import { SERVER_URL } from '.';
 
 function uploadPost({ image, caption }) {
   const requestOptions = {

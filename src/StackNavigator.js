@@ -7,7 +7,7 @@ import AppLoading from 'expo-app-loading';
 import TabNavigator from './TabNavigator';
 import asyncStorageMethods from './redux/helpers/async-storage';
 import { authenticationConstants } from './redux/constants';
-import { LoginScreen, RegisterScreen } from './screens';
+import { LoginScreen, RegisterScreen } from './screens/authentication';
 
 const Stack = createNativeStackNavigator();
 
