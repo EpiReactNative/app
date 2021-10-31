@@ -1,7 +1,7 @@
 import store from '../helpers/store';
 import { uploadConstants } from '../constants';
 import authHeader from '../helpers/auth-header';
-import { SERVER_URL } from '.';
+import config from '../helpers/config';
 
 function uploadPost({ image, caption }) {
   const requestOptions = {
@@ -11,7 +11,7 @@ function uploadPost({ image, caption }) {
   };
 
   store.dispatch({ type: uploadConstants.UPLOAD_REQUEST });
-  return fetch(`${SERVER_URL}/post/`, requestOptions)
+  return fetch(`${config.SERVER_URL}/post/`, requestOptions)
     .then(async (response) => {
       if (response.ok) {
         return response.json();
@@ -35,7 +35,7 @@ function getPosts() {
   };
 
   store.dispatch({ type: uploadConstants.UPLOAD_REQUEST });
-  return fetch(`${SERVER_URL}/post/`, requestOptions)
+  return fetch(`${config.SERVER_URL}/post/`, requestOptions)
     .then(async (response) => {
       if (response.ok) {
         return response.json();

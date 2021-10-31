@@ -1,7 +1,7 @@
 import store from '../helpers/store';
 import { authenticationConstants, userConstants } from '../constants';
 import asyncStorageMethods from '../helpers/async-storage';
-import { SERVER_URL } from '.';
+import config from '../helpers/config';
 
 function login(username, password) {
   const requestOptions = {
@@ -11,7 +11,7 @@ function login(username, password) {
   };
 
   store.dispatch({ type: authenticationConstants.LOGIN_REQUEST });
-  return fetch(`${SERVER_URL}/api-token-auth/`, requestOptions)
+  return fetch(`${config.SERVER_URL}/api-token-auth/`, requestOptions)
     .then(async (response) => {
       if (response.ok) {
         return response.json();
@@ -36,7 +36,7 @@ function register(username, email, password) {
     body: JSON.stringify({ username, email, password }),
   };
 
-  return fetch(`${SERVER_URL}/user/`, requestOptions)
+  return fetch(`${config.SERVER_URL}/user/`, requestOptions)
     .then(async (response) => {
       if (response.ok) {
         return response.json();

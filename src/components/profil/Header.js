@@ -1,54 +1,70 @@
 import React, { useState } from 'react';
+import PropTypes from 'prop-types';
 import { useSelector } from 'react-redux';
 import {
-  Button, Stack, Text, HStack, Icon, Modal, Divider,
+  Button, Stack, Text, HStack, VStack, Image,
 } from 'native-base';
-import { Ionicons } from '@expo/vector-icons';
-import { authenticationActions } from '../../redux/actions';
+import config from '../../redux/helpers/config';
+import { FollowersModal } from './modals';
 
-const HeaderProfil = () => {
-  const { user } = useSelector((state) => state.user);
-  const [showModal, setShowModal] = useState(false);
-
-  const handleLogout = () => {
-    authenticationActions.logout();
-    setShowModal(false);
-  };
+const ProfilHeader = ({ user }) => {
+  const { selfuser } = useSelector((state) => state.user);
+  const [showFollowers, setShowFollowers] = useState(false);
+  const handleOpenFollowers = () => setShowFollowers(true);
+  const handleCloseFollowers = () => setShowFollowers(false);
 
   return (
-    <Stack w="100%">
-      <Stack w="100%" px="4" py="3">
-        <HStack w="100%" justifyContent="space-between" alignItems="center">
-          <Text bold fontSize="xl">{user.username}</Text>
-          <Button p="0" variant="unstyled" onPress={() => setShowModal(true)}>
-            <Icon as={Ionicons} name="log-out-outline" size="md" color="#262626" />
-          </Button>
-        </HStack>
-      </Stack>
-      <Divider bg="light.200" w="100%" />
-      <Modal isOpen={showModal} onClose={() => setShowModal(false)}>
-        <Modal.Content maxWidth="400px">
-          <Modal.CloseButton />
-          <Modal.Header>Déconnexion</Modal.Header>
-          <Modal.Body>
-            <Text>Voulez-vous vraiment vous déconnecter ?</Text>
-          </Modal.Body>
-          <Modal.Footer>
-            <Button.Group space={2}>
-              <Button
-                variant="ghost"
-                colorScheme="blueGray"
-                onPress={() => setShowModal(false)}
-              >
-                Annuler
-              </Button>
-              <Button colorScheme="danger" onPress={handleLogout}>Confirmer</Button>
-            </Button.Group>
-          </Modal.Footer>
-        </Modal.Content>
-      </Modal>
+    <Stack w="100%" p="4">
+      <HStack w="100%" display="flex" alignItems="center" justifyContent="space-between">
+        <Image
+          resizeMode="cover"
+          source={{ uri: `${config.SERVER_URL}${user.profile_picture}` }}
+          width="90px"
+          height="90px"
+          alt="Image Profil"
+          rounded="full"
+        />
+        <VStack alignItems="center">
+          <Text fontSize="md" bold>{user.posts.length}</Text>
+          <Text>Publications</Text>
+        </VStack>
+        <Button variant="unstyled" onPress={handleOpenFollowers}>
+          <VStack alignItems="center">
+            <Text fontSize="md" bold>{user.followers.length}</Text>
+            <Text>Abonnés</Text>
+          </VStack>
+        </Button>
+        <VStack alignItems="center">
+          <Text fontSize="md" bold>{user.following.length}</Text>
+          <Text>Abonnements</Text>
+        </VStack>
+      </HStack>
+      <Text mt="2" semibold>{user.bio}</Text>
+      {selfuser.id === user.id ? (
+        <Button my="2" py="5px" variant="outline" colorScheme="light" borderColor="dark.500">
+          <Text semibold>Modifier le profil</Text>
+        </Button>
+      ) : (
+        <Button my="2" py="5px" variant="outline" colorScheme="light" borderColor="dark.500">
+          <Text semibold>Se abonner</Text>
+        </Button>
+      )}
+      {showFollowers && (
+        <FollowersModal show={showFollowers} handleClose={handleCloseFollowers} user={user} />
+      )}
     </Stack>
   );
 };
 
-export default HeaderProfil;
+export default ProfilHeader;
+
+ProfilHeader.propTypes = {
+  user: PropTypes.shape({
+    id: PropTypes.number.isRequired,
+    profile_picture: PropTypes.string.isRequired,
+    posts: PropTypes.arrayOf(PropTypes.number).isRequired,
+    followers: PropTypes.arrayOf(PropTypes.number).isRequired,
+    following: PropTypes.arrayOf(PropTypes.number).isRequired,
+    bio: PropTypes.string.isRequired,
+  }).isRequired,
+};

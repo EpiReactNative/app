@@ -1,7 +1,7 @@
 import store from '../helpers/store';
 import authHeader from '../helpers/auth-header';
 import { userConstants } from '../constants';
-import { SERVER_URL } from '.';
+import config from '../helpers/config';
 
 function whoami() {
   const requestOptions = {
@@ -10,7 +10,7 @@ function whoami() {
   };
 
   store.dispatch({ type: userConstants.USER_CLEAR });
-  return fetch(`${SERVER_URL}/api/whoami/`, requestOptions)
+  return fetch(`${config.SERVER_URL}/api/whoami/`, requestOptions)
     .then(async (response) => {
       if (response.ok) {
         return response.json();
@@ -26,8 +26,68 @@ function whoami() {
     });
 }
 
+function getUser(id) {
+  const requestOptions = {
+    method: 'GET',
+    headers: { 'Content-Type': 'application/json', Authorization: authHeader().Authorization },
+  };
+
+  return fetch(`${config.SERVER_URL}/user/${id}/`, requestOptions)
+    .then(async (response) => {
+      if (response.ok) {
+        return response.json();
+      }
+      throw new Error(response);
+    })
+    .then((data) => data)
+    .catch((error = undefined) => {
+      throw new Error(error);
+    });
+}
+
+function getPosts(id, limit, offset) {
+  const requestOptions = {
+    method: 'GET',
+    headers: { 'Content-Type': 'application/json', Authorization: authHeader().Authorization },
+  };
+
+  return fetch(`${config.SERVER_URL}/user/${id}/posts/?limit=${limit}&offset=${offset}`, requestOptions)
+    .then(async (response) => {
+      if (response.ok) {
+        return response.json();
+      }
+      throw new Error(response);
+    })
+    .then((data) => data)
+    .catch((error = undefined) => {
+      throw new Error(error);
+    });
+}
+
+function getFollowers(id, limit, offset) {
+  const requestOptions = {
+    method: 'GET',
+    headers: { 'Content-Type': 'application/json', Authorization: authHeader().Authorization },
+  };
+
+  return fetch(`${config.SERVER_URL}/user/${id}/followers/?limit=${limit}&offset=${offset}`, requestOptions)
+    .then(async (response) => {
+      if (response.ok) {
+        return response.json();
+      }
+      throw new Error(response);
+    })
+    .then((data) => data)
+    .catch((error = undefined) => {
+      throw new Error(error);
+    });
+}
+
 const userActions = {
   whoami,
+  getUser,
+  getPosts,
+  getFollowers,
 };
 
 export default userActions;

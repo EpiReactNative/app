@@ -1,14 +1,14 @@
 import { userConstants } from '../constants';
 
 const initialState = {
-  user: null,
+  selfuser: null,
 };
 
 function user(state = initialState, action) {
   switch (action.type) {
     case userConstants.USER_UPDATE:
       return {
-        user: action.user,
+        selfuser: action.user,
       };
     case userConstants.USER_CLEAR:
       return {};
