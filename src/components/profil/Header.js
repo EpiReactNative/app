@@ -5,13 +5,16 @@ import {
   Button, Stack, Text, HStack, VStack, Image,
 } from 'native-base';
 import config from '../../redux/helpers/config';
-import { FollowersModal } from './modals';
+import Modal from './UsersModal';
 
 const ProfilHeader = ({ user }) => {
   const { selfuser } = useSelector((state) => state.user);
   const [showFollowers, setShowFollowers] = useState(false);
   const handleOpenFollowers = () => setShowFollowers(true);
   const handleCloseFollowers = () => setShowFollowers(false);
+  const [showFollowing, setShowFollowing] = useState(false);
+  const handleOpenFollowing = () => setShowFollowing(true);
+  const handleCloseFollowing = () => setShowFollowing(false);
 
   return (
     <Stack w="100%" p="4">
@@ -28,29 +31,48 @@ const ProfilHeader = ({ user }) => {
           <Text fontSize="md" bold>{user.posts.length}</Text>
           <Text>Publications</Text>
         </VStack>
-        <Button variant="unstyled" onPress={handleOpenFollowers}>
+        <Button p="0" variant="unstyled" onPress={handleOpenFollowers}>
           <VStack alignItems="center">
             <Text fontSize="md" bold>{user.followers.length}</Text>
             <Text>Abonnés</Text>
           </VStack>
         </Button>
-        <VStack alignItems="center">
-          <Text fontSize="md" bold>{user.following.length}</Text>
-          <Text>Abonnements</Text>
-        </VStack>
+        <Button p="0" variant="unstyled" onPress={handleOpenFollowing}>
+          <VStack alignItems="center">
+            <Text fontSize="md" bold>{user.following.length}</Text>
+            <Text>Abonnements</Text>
+          </VStack>
+        </Button>
       </HStack>
       <Text mt="2" semibold>{user.bio}</Text>
-      {selfuser.id === user.id ? (
-        <Button my="2" py="5px" variant="outline" colorScheme="light" borderColor="dark.500">
+      {selfuser && selfuser.id === user.id ? (
+        <Button my="2" py="5px" variant="outline" colorScheme="light" style={{ backgroundColor: 'white' }}>
           <Text semibold>Modifier le profil</Text>
         </Button>
       ) : (
-        <Button my="2" py="5px" variant="outline" colorScheme="light" borderColor="dark.500">
-          <Text semibold>Se abonner</Text>
+        <Button my="2" py="5px" colorScheme="light" borderColor="dark.500">
+          <Text semibold>S&apos;abonner</Text>
         </Button>
       )}
       {showFollowers && (
-        <FollowersModal show={showFollowers} handleClose={handleCloseFollowers} user={user} />
+        <Modal
+          user={user}
+          show={showFollowers}
+          handleClose={handleCloseFollowers}
+          name="followers"
+          title="Abonnés"
+          empty="Aucun abonné"
+        />
+      )}
+      {showFollowing && (
+        <Modal
+          user={user}
+          show={showFollowing}
+          handleClose={handleCloseFollowing}
+          name="following"
+          title="Abonnements"
+          empty="Aucun abonnement"
+        />
       )}
     </Stack>
   );

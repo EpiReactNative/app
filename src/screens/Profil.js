@@ -18,7 +18,7 @@ function ProfilScreen({ id }) {
   useAsyncEffect(async (isMounted) => {
     if (isMounted()) {
       userActions.whoami().then((selfuser) => {
-        if (id && id !== selfuser.id) {
+        if (id && selfuser && id !== selfuser.id) {
           userActions.getUser(id).then((data) => {
             setUser(data);
             if (isMounted()) setMounted(true);
@@ -35,7 +35,7 @@ function ProfilScreen({ id }) {
     }
   }, []);
 
-  if (!mounted) {
+  if (!mounted || !user) {
     return <Loading />;
   }
 

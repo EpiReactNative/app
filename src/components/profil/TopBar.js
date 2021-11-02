@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import Constants from 'expo-constants';
 import PropTypes from 'prop-types';
 import { useSelector } from 'react-redux';
 import {
@@ -17,7 +18,13 @@ const ProfilTopBar = ({ user }) => {
   };
 
   return (
-    <Stack w="100%">
+    <Stack
+      w="100%"
+      style={{
+        paddingTop: Constants.statusBarHeight,
+        backgroundColor: 'white',
+      }}
+    >
       <Stack w="100%" px="4" py="3">
         <HStack w="100%" justifyContent="space-between" alignItems="center">
           <Text bold fontSize="xl">{user.username}</Text>

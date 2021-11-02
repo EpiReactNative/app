@@ -4,7 +4,7 @@ import { useAsyncEffect } from 'use-async-effect';
 import {
   HStack, Image, Box, Center, Icon, Toast,
 } from 'native-base';
-import { Dimensions, StatusBar, Pressable } from 'react-native';
+import { Dimensions, Pressable } from 'react-native';
 import { TabView } from 'react-native-tab-view';
 import { Ionicons } from '@expo/vector-icons';
 import config from '../../redux/helpers/config';
@@ -101,7 +101,6 @@ function ProfilContainer({ user }) {
               alignItems="center"
               py="2"
               px="5"
-              cursor="pointer"
             >
               <Pressable
                 onPress={() => setIndex(i)}
@@ -126,7 +125,6 @@ function ProfilContainer({ user }) {
       renderTabBar={renderTabBar}
       onIndexChange={setIndex}
       initialLayout={initialLayout}
-      style={{ marginTop: StatusBar.currentHeight }}
       user={user}
     />
   );

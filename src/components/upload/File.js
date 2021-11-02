@@ -103,7 +103,7 @@ const FileScreen = ({ navigation }) => {
           <Text color="light.500" semibold>OU</Text>
           <Divider bg="light.400" w="40%" />
         </HStack>
-        <Button my="4" variant="outline" colorScheme="light" onPress={selectFromMediaLibrary}>
+        <Button my="4" variant="outline" colorScheme="light" onPress={selectFromMediaLibrary} style={{ backgroundColor: 'white' }}>
           <HStack justifyContent="space-between" alignItems="center">
             <Icon as={Ionicons} name="image-outline" size="lg" color="#262626" />
             <VStack ml="2" justify="flex-start" align="center">

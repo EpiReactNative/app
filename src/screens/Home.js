@@ -47,7 +47,6 @@ function HomeScreen() {
   useAsyncEffect(async (isMounted) => {
     if (isMounted()) {
       postActions.getPosts().then((data) => {
-        console.log(data);
         setPosts(data);
         if (isMounted()) setMounted(true);
       }).catch(() => {
