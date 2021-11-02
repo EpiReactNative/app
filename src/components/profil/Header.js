@@ -7,7 +7,7 @@ import {
 import config from '../../redux/helpers/config';
 import Modal from './UsersModal';
 
-const ProfilHeader = ({ user }) => {
+const ProfilHeader = ({ navigation, user }) => {
   const { selfuser } = useSelector((state) => state.user);
   const [showFollowers, setShowFollowers] = useState(false);
   const handleOpenFollowers = () => setShowFollowers(true);
@@ -15,6 +15,10 @@ const ProfilHeader = ({ user }) => {
   const [showFollowing, setShowFollowing] = useState(false);
   const handleOpenFollowing = () => setShowFollowing(true);
   const handleCloseFollowing = () => setShowFollowing(false);
+
+  const editUser = () => {
+    navigation.navigate('EditUser', { user });
+  };
 
   return (
     <Stack w="100%" p="4">
@@ -46,7 +50,14 @@ const ProfilHeader = ({ user }) => {
       </HStack>
       <Text mt="2" semibold>{user.bio}</Text>
       {selfuser && selfuser.id === user.id ? (
-        <Button my="2" py="5px" variant="outline" colorScheme="light" style={{ backgroundColor: 'white' }}>
+        <Button
+          my="2"
+          py="5px"
+          variant="outline"
+          colorScheme="light"
+          style={{ backgroundColor: 'white' }}
+          onPress={editUser}
+        >
           <Text semibold>Modifier le profil</Text>
         </Button>
       ) : (
@@ -54,26 +65,30 @@ const ProfilHeader = ({ user }) => {
           <Text semibold>S&apos;abonner</Text>
         </Button>
       )}
-      {showFollowers && (
-        <Modal
-          user={user}
-          show={showFollowers}
-          handleClose={handleCloseFollowers}
-          name="followers"
-          title="Abonnés"
-          empty="Aucun abonné"
-        />
-      )}
-      {showFollowing && (
-        <Modal
-          user={user}
-          show={showFollowing}
-          handleClose={handleCloseFollowing}
-          name="following"
-          title="Abonnements"
-          empty="Aucun abonnement"
-        />
-      )}
+      {
+        showFollowers && (
+          <Modal
+            user={user}
+            show={showFollowers}
+            handleClose={handleCloseFollowers}
+            name="followers"
+            title="Abonnés"
+            empty="Aucun abonné"
+          />
+        )
+      }
+      {
+        showFollowing && (
+          <Modal
+            user={user}
+            show={showFollowing}
+            handleClose={handleCloseFollowing}
+            name="following"
+            title="Abonnements"
+            empty="Aucun abonnement"
+          />
+        )
+      }
     </Stack>
   );
 };
@@ -88,5 +103,17 @@ ProfilHeader.propTypes = {
     followers: PropTypes.arrayOf(PropTypes.number).isRequired,
     following: PropTypes.arrayOf(PropTypes.number).isRequired,
     bio: PropTypes.string.isRequired,
+  }).isRequired,
+  navigation: PropTypes.shape({
+    dispatch: PropTypes.func.isRequired,
+    goBack: PropTypes.func.isRequired,
+    navigate: PropTypes.func.isRequired,
+    setParams: PropTypes.func.isRequired,
+    state: PropTypes.shape({
+      key: PropTypes.string.isRequired,
+      routeName: PropTypes.string.isRequired,
+      path: PropTypes.string,
+      params: PropTypes.objectOf(PropTypes.object),
+    }),
   }).isRequired,
 };
