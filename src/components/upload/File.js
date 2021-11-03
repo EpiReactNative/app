@@ -12,16 +12,18 @@ import ImagePickerTools from '../../redux/helpers/ImagePicker';
 const FileScreen = ({ navigation }) => {
   const dispatch = useDispatch();
 
+  const imageConfig = {
+    mediaTypes: ImagePicker.MediaTypeOptions.Images,
+    // allowsMultipleSelection: true, // est-ce qu'on veut vraiment faire ça ?
+    allowsEditing: true,
+    base64: true,
+    quality: 1,
+  };
+
   const selectFromCamera = async () => {
     const isGranted = await ImagePickerTools.handleCameraPermissions();
     if (!isGranted) return;
-    const image = await ImagePicker.launchCameraAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      // allowsMultipleSelection: true, // est-ce qu'on veut vraiment faire ça ?
-      allowsEditing: true,
-      base64: true,
-      quality: 1,
-    });
+    const image = await ImagePicker.launchCameraAsync(imageConfig);
     if (!image.cancelled) {
       navigation.navigate('Publication', { image });
     }
@@ -30,13 +32,7 @@ const FileScreen = ({ navigation }) => {
   const selectFromMediaLibrary = async () => {
     const isGranted = await ImagePickerTools.handleMediaLibraryPermissions();
     if (!isGranted) return;
-    const image = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      // allowsMultipleSelection: true, // est-ce qu'on veut vraiment faire ça ?
-      allowsEditing: true,
-      base64: true,
-      quality: 1,
-    });
+    const image = await ImagePicker.launchImageLibraryAsync(imageConfig);
     if (!image.cancelled) {
       navigation.navigate('Publication', { image });
     }

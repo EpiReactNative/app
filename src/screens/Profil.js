@@ -1,10 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import PropTypes from 'prop-types';
 import { useAsyncEffect } from 'use-async-effect';
-import { Ionicons } from '@expo/vector-icons';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { useIsFocused } from "@react-navigation/native";
 import {
-  Stack, Toast, Icon, Button, Spinner,
+  Stack, Toast,
 } from 'native-base';
 import { userActions } from '../redux/actions';
 import Loading from '../components/Loading';
@@ -28,8 +28,38 @@ const ProfilStack = createNativeStackNavigator();
 
 function ProfilStackScreen({ id }) {
   const [mounted, setMounted] = useState(false);
-  const [editing, setEditing] = useState(false);
   const [user, setUser] = useState(undefined);
+  const isFocused = useIsFocused();
+
+  // const fetchData = async () => {
+  //   setMounted(false)
+  //   userActions.whoami().then((selfuser) => {
+  //     if (id && selfuser && id !== selfuser.id) {
+  //       userActions.getUser(id).then((data) => {
+  //         setUser(data);
+  //         setMounted(true);
+  //       }).catch(() => {
+  //         Toast.show(toasts.globalError);
+  //       });
+  //     } else {
+  //       setUser(selfuser);
+  //       setMounted(true);
+  //     }
+  //   }).catch(() => {
+  //     Toast.show(toasts.globalError);
+  //   });
+  // };
+
+  // useEffect(() => {
+  //   console.log("called");
+  //   async function myAsyncEffect() {
+  //     await fetchData();
+  //   }
+
+  //   if (isFocused) {
+  //     myAsyncEffect();
+  //   }
+  // }, [fetchData, isFocused]);
 
   useAsyncEffect(async (isMounted) => {
     if (isMounted()) {
@@ -51,14 +81,12 @@ function ProfilStackScreen({ id }) {
     }
   }, []);
 
-  const editUser = () => {
-    console.log('edit user');
-    setEditing(false);
-  };
-
   if (!mounted || !user) {
     return <Loading />;
   }
+
+  console.log(mounted);
+  console.log(user);
 
   return (
     <ProfilStack.Navigator>
@@ -69,19 +97,6 @@ function ProfilStackScreen({ id }) {
         initialParams={{ user }}
         options={{
           title: 'Modifier profil',
-          headerRight: () => (
-            <Stack>
-              {editing ? (
-                <Stack mr="5">
-                  <Spinner color="#06B6D4" />
-                </Stack>
-              ) : (
-                <Button variant="unstyled" onPress={editUser}>
-                  <Icon as={Ionicons} name="checkmark-outline" size="md" color="#06B6D4" />
-                </Button>
-              )}
-            </Stack>
-          ),
         }}
       />
     </ProfilStack.Navigator>
