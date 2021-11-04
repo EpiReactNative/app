@@ -72,7 +72,7 @@ function HomeScreen() {
       >
         {posts.map((post) => (
           <Box key={post.id} w="100%" mb="4">
-            <Text>{post.author}</Text>
+            <Text>{post.author.username}</Text>
             <Image
               resizeMode="cover"
               source={{ uri: post.image }}
