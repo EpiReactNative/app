@@ -61,9 +61,8 @@ function ProfilStackScreen({ id }) {
     return () => {
       setMounted(false);
     };
-    /* eslint-disable react-hooks/exhaustive-deps */
     // Comment éviter le boucle inf si on ajoute fetchData() dans les dépendances du useEffect ?
-  }, [isFocused, dispatch]);
+  }, [isFocused, dispatch]); // eslint-disable-line react-hooks/exhaustive-deps
 
   if (!mounted || !user) {
     return <Loading />;

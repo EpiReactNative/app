@@ -51,8 +51,7 @@ const PostGrid = ({ posts, navigation }) => {
 export default PostGrid;
 
 PostGrid.propTypes = {
-  // eslint-disable-next-line react/forbid-prop-types
-  posts: PropTypes.array.isRequired,
+  posts: PropTypes.arrayOf(PropTypes.shape).isRequired,
   navigation: PropTypes.shape({
     dispatch: PropTypes.func.isRequired,
     goBack: PropTypes.func.isRequired,

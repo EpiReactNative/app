@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import {
   Button, Stack, Center, Input, Icon, Text, Toast,
 } from 'native-base';
-/* eslint-disable camelcase */
+/* eslint-disable-next-line camelcase */
 import { useFonts, LeckerliOne_400Regular } from '@expo-google-fonts/leckerli-one';
 import { MaterialIcons } from '@expo/vector-icons';
 import AppLoading from 'expo-app-loading';

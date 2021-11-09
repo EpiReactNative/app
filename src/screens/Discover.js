@@ -70,15 +70,7 @@ export default DiscoverStackScreen;
 DiscoverScreen.propTypes = {
   route: PropTypes.shape({
     params: PropTypes.shape({
-      posts: PropTypes.shape({
-        id: PropTypes.number.isRequired,
-        author: PropTypes.shape({
-          username: PropTypes.string.isRequired,
-          profile_picture: PropTypes.string.isRequired,
-        }).isRequired,
-        image: PropTypes.string.isRequired,
-        caption: PropTypes.string.isRequired,
-      }).isRequired,
+      posts: PropTypes.arrayOf(PropTypes.shape).isRequired,
     }).isRequired,
   }).isRequired,
   navigation: PropTypes.shape({
