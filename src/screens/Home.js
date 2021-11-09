@@ -2,7 +2,7 @@ import React, { useState, useCallback } from 'react';
 import PropTypes from 'prop-types';
 import { useAsyncEffect } from 'use-async-effect';
 import {
-  Dimensions, RefreshControl, SafeAreaView, ScrollView, StyleSheet,
+  Dimensions, View, RefreshControl, SafeAreaView, ScrollView, StyleSheet,
 } from 'react-native';
 import {
   Text, Toast, Box, Image,
@@ -62,7 +62,6 @@ function HomeScreen() {
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView
-        contentContainerStyle={styles.scrollView}
         refreshControl={(
           <RefreshControl
             refreshing={refreshing}
@@ -71,17 +70,29 @@ function HomeScreen() {
         )}
       >
         {posts.map((post) => (
-          <Box key={post.id} w="100%" mb="4">
-            <Text>{post.author.username}</Text>
+          console.log("Dans post"),
+          console.log(post),
+          <Box key={post.id} width= '100%'>
+            <Box style={{flexDirection: 'row', width: '100%', marginTop: '3%', marginBottom: '5%'}}>
             <Image
-              resizeMode="cover"
+              source={{ uri: 'https://epigrambe.herokuapp.com' + post.author.profile_picture}}
+              width='8%'
+              height='100%'
+              style={{marginLeft: '2%', borderRadius: 20, marginTop: '1%'}}
+              alt='test'
+            />
+            <Text style={{marginTop: '2%', marginLeft: '3%'}}>{post.author.username}</Text>
+            </Box>
+            <Image
               source={{ uri: post.image }}
               alt="Post Image"
               width={Dimensions.get('window').width}
               height={Dimensions.get('window').width}
-            // width={getImageSize().width}
-            // height={getImageSize().height}
             />
+            <Box style={{flexDirection: 'row'}}>
+              <Text style={{marginTop: '2%', marginLeft: '3%'}}>{post.author.username}</Text>
+              <Text style={{marginTop: '2%', marginLeft: '3%'}}>{post.caption}</Text>
+            </Box>
           </Box>
         ))}
       </ScrollView>
