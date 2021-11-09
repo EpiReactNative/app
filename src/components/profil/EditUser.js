@@ -111,9 +111,10 @@ const EditUserScreen = ({ route, navigation }) => {
       if (!inputs.profile_picture.uri.includes('/media/profile_picture/')) {
         payload.profile_picture = inputs.profile_picture.uri;
       }
-      userActions.updateUser(route.params.user.id, payload).then((data) => {
+      userActions.updateUser(route.params.user.id, payload).then(() => {
         setEditing(false);
-        navigation.navigate('User');
+        route.params.fetchData();
+        navigation.popToTop();
       }).catch(() => {
         Toast.show(toasts.globalError);
         setEditing(false);
@@ -245,6 +246,7 @@ EditUserScreen.propTypes = {
         bio: PropTypes.string.isRequired,
         profile_picture: PropTypes.string.isRequired,
       }).isRequired,
+      fetchData: PropTypes.func.isRequired,
     }).isRequired,
   }).isRequired,
   navigation: PropTypes.shape({
@@ -253,6 +255,7 @@ EditUserScreen.propTypes = {
     navigate: PropTypes.func.isRequired,
     setParams: PropTypes.func.isRequired,
     setOptions: PropTypes.func.isRequired,
+    popToTop: PropTypes.func.isRequired,
     state: PropTypes.shape({
       key: PropTypes.string.isRequired,
       routeName: PropTypes.string.isRequired,

@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
-import { useAsyncEffect } from 'use-async-effect';
+import { useDispatch } from 'react-redux';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { useIsFocused } from '@react-navigation/native';
 import {
@@ -13,79 +13,61 @@ import {
   ProfilTopBar, ProfilHeader, ProfilContainer, EditUserScreen,
 } from '../components/profil';
 
-const UserScreen = ({ route, navigation }) => {
-  console.log(route.params.user);
-  return (
-    <Stack w="100%" h="100%">
-      <ProfilTopBar user={route.params.user} />
-      <ProfilHeader user={route.params.user} navigation={navigation} />
-      <ProfilContainer user={route.params.user} />
-    </Stack>
-  );
-};
+const UserScreen = ({ route, navigation }) => (
+  <Stack w="100%" h="100%">
+    <ProfilTopBar user={route.params.user} />
+    <ProfilHeader user={route.params.user} navigation={navigation} />
+    <ProfilContainer user={route.params.user} />
+  </Stack>
+);
 
 const ProfilStack = createNativeStackNavigator();
 
 function ProfilStackScreen({ id }) {
   const [mounted, setMounted] = useState(false);
   const [user, setUser] = useState(undefined);
+  const isFocused = useIsFocused();
+  const dispatch = useDispatch();
 
-  // const fetchData = async () => {
-  //   setMounted(false)
-  //   userActions.whoami().then((selfuser) => {
-  //     if (id && selfuser && id !== selfuser.id) {
-  //       userActions.getUser(id).then((data) => {
-  //         setUser(data);
-  //         setMounted(true);
-  //       }).catch(() => {
-  //         Toast.show(toasts.globalError);
-  //       });
-  //     } else {
-  //       setUser(selfuser);
-  //       setMounted(true);
-  //     }
-  //   }).catch(() => {
-  //     Toast.show(toasts.globalError);
-  //   });
-  // };
+  const fetchData = async () => {
+    setMounted(false);
+    if (!mounted) setMounted(false);
+    userActions.whoami().then((selfuser) => {
+      if (id && selfuser && id !== selfuser.id) {
+        userActions.getUser(id).then((data) => {
+          setUser(data);
+          setMounted(true);
+        }).catch(() => {
+          Toast.show(toasts.globalError);
+        });
+      } else {
+        setUser(selfuser);
+        setMounted(true);
+      }
+    }).catch(() => {
+      Toast.show(toasts.globalError);
+    });
+  };
 
-  // useEffect(() => {
-  //   console.log("called");
-  //   async function myAsyncEffect() {
-  //     await fetchData();
-  //   }
-
-  //   if (isFocused) {
-  //     myAsyncEffect();
-  //   }
-  // }, [fetchData, isFocused]);
-
-  useAsyncEffect(async (isMounted) => {
-    if (isMounted()) {
-      userActions.whoami().then((selfuser) => {
-        if (id && selfuser && id !== selfuser.id) {
-          userActions.getUser(id).then((data) => {
-            setUser(data);
-            if (isMounted()) setMounted(true);
-          }).catch(() => {
-            Toast.show(toasts.globalError);
-          });
-        } else {
-          setUser(selfuser);
-          if (isMounted()) setMounted(true);
-        }
-      }).catch(() => {
-        Toast.show(toasts.globalError);
-      });
+  useEffect(() => {
+    async function myAsyncEffect() {
+      await fetchData();
     }
-  }, []);
+
+    if (isFocused) {
+      myAsyncEffect();
+    }
+
+    return () => {
+      setMounted(false);
+    };
+    /* eslint-disable react-hooks/exhaustive-deps */
+    // Comment éviter le boucle inf si on ajoute fetchData() dans les dépendances du useEffect ?
+  }, [isFocused, dispatch]);
 
   if (!mounted || !user) {
     return <Loading />;
   }
-
-  console.log(mounted);
-  console.log(user);
 
   return (
     <ProfilStack.Navigator>
@@ -93,7 +75,7 @@ function ProfilStackScreen({ id }) {
       <ProfilStack.Screen
         name="EditUser"
         component={EditUserScreen}
-        initialParams={{ user }}
+        initialParams={{ user, fetchData }}
         options={{
           title: 'Modifier profil',
         }}

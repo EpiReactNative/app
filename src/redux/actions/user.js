@@ -19,7 +19,6 @@ function whoami() {
     })
     .then((data) => {
       store.dispatch({ type: userConstants.USER_UPDATE, user: data });
-      console.log('before return');
       return data;
     })
     .catch((error = undefined) => {
@@ -104,7 +103,6 @@ function getFollowing(id, limit, offset) {
 }
 
 function updateUser(id, payload) {
-  console.log(payload);
   const requestOptions = {
     method: 'PATCH',
     headers: { 'Content-Type': 'application/json', Authorization: authHeader().Authorization },

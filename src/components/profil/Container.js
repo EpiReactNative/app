@@ -9,7 +9,6 @@ import { TabView } from 'react-native-tab-view';
 import { Ionicons } from '@expo/vector-icons';
 import config from '../../redux/helpers/config';
 import { userActions } from '../../redux/actions';
-import Loading from '../Loading';
 import toasts from '../../redux/helpers/toasts';
 
 const LikesScreen = () => <Center flex={1}>Likes Screen</Center>;
@@ -19,16 +18,14 @@ const initialLayout = { width: Dimensions.get('window').width };
 const PostsScreen = ({ user }) => {
   const [mounted, setMounted] = useState(false);
   const [posts, setPosts] = useState(undefined);
-  const limit = 2;
-  const [offset, setOffset] = useState(0);
+  const limit = 12;
   const width = (Dimensions.get('window').width - 6) * (1 / 3);
   const height = width;
 
   useAsyncEffect(async (isMounted) => {
     if (isMounted()) {
-      userActions.getPosts(user.id, limit, offset).then((data) => {
+      userActions.getPosts(user.id, limit, 0).then((data) => {
         setPosts(data.results);
-        setOffset(offset + limit);
         if (isMounted()) setMounted(true);
       }).catch(() => {
         Toast.show(toasts.globalError);
@@ -40,22 +37,22 @@ const PostsScreen = ({ user }) => {
   const getChunks = () => {
     const chunkSize = 3;
     return [...Array(Math.ceil(posts.length / chunkSize))]
-      .map((_, i) => posts.slice(i * chunkSize, i * chunkSize + chunkSize));
+      .map((_, i) => ({ id: i, posts: posts.slice(i * chunkSize, i * chunkSize + chunkSize) }));
   };
 
   const getMargin = (i) => {
     if (i !== 2) return '3px';
-    return '';
+    return '0';
   };
 
   if (!mounted) {
-    return <Loading />;
+    return null;
   }
 
   return (
     getChunks().map((chunk) => (
-      <HStack key={chunk} mb="3px" w="100%" flexWrap="wrap">
-        {chunk.map((post, i) => (
+      <HStack key={chunk.id} mb="3px" w="100%" flexWrap="wrap">
+        {chunk.posts.map((post, i) => (
           <Image
             mr={getMargin(i)}
             key={post.id}
@@ -94,24 +91,24 @@ function ProfilContainer({ user }) {
         {navigationState.routes.map((route, i) => {
           const borderColor = index === i ? '#262626' : 'transparent';
           return (
-            <Box
+            <Pressable
               key={route.key}
-              borderBottomWidth="3"
-              borderColor={borderColor}
-              alignItems="center"
-              py="2"
-              px="5"
+              onPress={() => setIndex(i)}
             >
-              <Pressable
-                onPress={() => setIndex(i)}
+              <Box
+                borderBottomWidth="3"
+                borderColor={borderColor}
+                alignItems="center"
+                py="2"
+                px="5"
               >
                 {index === i ? (
                   <Icon as={Ionicons} name={route.icon} size="sm" color="#262626" />
                 ) : (
                   <Icon as={Ionicons} name={`${route.icon}-outline`} size="sm" color="#262626" />
                 )}
-              </Pressable>
-            </Box>
+              </Box>
+            </Pressable>
           );
         })}
       </HStack>
