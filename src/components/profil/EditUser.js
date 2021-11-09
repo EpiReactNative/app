@@ -100,7 +100,6 @@ const EditUserScreen = ({ route, navigation }) => {
     const handleSubmit = () => {
       if (!handleValidation()) return;
       setEditing(true);
-      console.log(inputs);
       const payload = {
         username: inputs.username,
         password: inputs.password,
@@ -113,7 +112,6 @@ const EditUserScreen = ({ route, navigation }) => {
         payload.profile_picture = inputs.profile_picture.uri;
       }
       userActions.updateUser(route.params.user.id, payload).then((data) => {
-        console.log(data);
         setEditing(false);
         navigation.navigate('User');
       }).catch(() => {

@@ -2,14 +2,15 @@ import React, { useState, useCallback } from 'react';
 import PropTypes from 'prop-types';
 import { useAsyncEffect } from 'use-async-effect';
 import {
-  Dimensions, RefreshControl, SafeAreaView, ScrollView, StyleSheet,
+  RefreshControl, SafeAreaView, ScrollView, StyleSheet,
 } from 'react-native';
 import {
-  Text, Toast, Box, Image,
+  Toast,
 } from 'native-base';
 import { postActions } from '../redux/actions';
 import Loading from '../components/Loading';
 import toasts from '../redux/helpers/toasts';
+import { Post } from '../components/home';
 
 const styles = StyleSheet.create({
   container: {
@@ -71,18 +72,7 @@ function HomeScreen() {
         )}
       >
         {posts.map((post) => (
-          <Box key={post.id} w="100%" mb="4">
-            <Text>{post.author.username}</Text>
-            <Image
-              resizeMode="cover"
-              source={{ uri: post.image }}
-              alt="Post Image"
-              width={Dimensions.get('window').width}
-              height={Dimensions.get('window').width}
-            // width={getImageSize().width}
-            // height={getImageSize().height}
-            />
-          </Box>
+          <Post post={post} />
         ))}
       </ScrollView>
     </SafeAreaView>

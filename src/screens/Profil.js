@@ -1,8 +1,8 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { useAsyncEffect } from 'use-async-effect';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { useIsFocused } from "@react-navigation/native";
+import { useIsFocused } from '@react-navigation/native';
 import {
   Stack, Toast,
 } from 'native-base';
@@ -29,7 +29,6 @@ const ProfilStack = createNativeStackNavigator();
 function ProfilStackScreen({ id }) {
   const [mounted, setMounted] = useState(false);
   const [user, setUser] = useState(undefined);
-  const isFocused = useIsFocused();
 
   // const fetchData = async () => {
   //   setMounted(false)
