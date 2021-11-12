@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { useAsyncEffect } from 'use-async-effect';
 import {
   Button, Toast, Modal, Text, HStack, Image, VStack, Stack, Spinner, ScrollView,
-  ZStack, Center,
+  ZStack, Center, Pressable,
 } from 'native-base';
 import _ from 'lodash';
 import { userActions } from '../../redux/actions';
@@ -12,7 +12,7 @@ import config from '../../redux/helpers/config';
 import Loading from '../Loading';
 
 const UsersModal = ({
-  show, handleClose, user, name, title, empty,
+  show, handleClose, user, name, title, empty, navigation,
 }) => {
   const [mounted, setMounted] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -55,33 +55,43 @@ const UsersModal = ({
       return '0';
     };
 
+    const goToUser = () => {
+      navigation.push('User', { id: item.id });
+    };
+
     return (
       <HStack px="3" height="39px" mb={getBottomMargin(index)} key={item.id} w="100%" justifyContent="space-between" alignItems="center">
-        <HStack alignItems="center">
-          <Image
-            resizeMode="cover"
-            source={{ uri: `${config.SERVER_URL}${item.profile_picture}` }}
-            width="30px"
-            height="30px"
-            alt="Image Profil"
-            rounded="full"
-          />
-          <VStack ml="2">
-            <Text semibold fontSize="sm">{item.username}</Text>
-            {(item.first_name !== '' || item.last_name !== '') && (
-              <Text color="light.500" fontSize="xs">
-                {item.first_name}
-                &nbsp;
-                {item.last_name}
-              </Text>
-            )}
-          </VStack>
-        </HStack>
-        {user.following.includes(item.id) ? (
-          <Button variant="outline" py="1" px="2" size="sm">Se désabonner</Button>
-        ) : (
-          <Button py="1" px="2" size="sm">S&apos;abonner</Button>
-        )}
+        <Pressable
+          onPress={goToUser}
+        >
+          <HStack alignItems="center">
+            <Image
+              resizeMode="cover"
+              source={{ uri: `${config.SERVER_URL}${item.profile_picture}` }}
+              width="30px"
+              height="30px"
+              alt="Image Profil"
+              rounded="full"
+            />
+            <VStack ml="2">
+              <Text semibold fontSize="sm">{item.username}</Text>
+              {(item.first_name !== '' || item.last_name !== '') && (
+                <Text color="light.500" fontSize="xs">
+                  {item.first_name}
+                  &nbsp;
+                  {item.last_name}
+                </Text>
+              )}
+            </VStack>
+          </HStack>
+        </Pressable>
+        {
+          user.following.includes(item.id) ? (
+            <Button variant="outline" py="1" px="2" size="sm">Se désabonner</Button>
+          ) : (
+            <Button py="1" px="2" size="sm">S&apos;abonner</Button>
+          )
+        }
       </HStack>
     );
   };
@@ -149,4 +159,17 @@ UsersModal.propTypes = {
   name: PropTypes.string.isRequired,
   title: PropTypes.string.isRequired,
   empty: PropTypes.string.isRequired,
+  navigation: PropTypes.shape({
+    dispatch: PropTypes.func.isRequired,
+    goBack: PropTypes.func.isRequired,
+    navigate: PropTypes.func.isRequired,
+    push: PropTypes.func.isRequired,
+    setParams: PropTypes.func.isRequired,
+    state: PropTypes.shape({
+      key: PropTypes.string.isRequired,
+      routeName: PropTypes.string.isRequired,
+      path: PropTypes.string,
+      params: PropTypes.objectOf(PropTypes.object),
+    }),
+  }).isRequired,
 };

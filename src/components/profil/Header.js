@@ -4,7 +4,6 @@ import { useSelector } from 'react-redux';
 import {
   Button, Stack, Text, HStack, VStack, Image,
 } from 'native-base';
-import config from '../../redux/helpers/config';
 import Modal from './UsersModal';
 
 const ProfilHeader = ({ navigation, user }) => {
@@ -25,7 +24,7 @@ const ProfilHeader = ({ navigation, user }) => {
       <HStack w="100%" display="flex" alignItems="center" justifyContent="space-between">
         <Image
           resizeMode="cover"
-          source={{ uri: `${config.SERVER_URL}${user.profile_picture}` }}
+          source={{ uri: `${user.profile_picture}` }}
           width="90px"
           height="90px"
           alt="Image Profil"
@@ -61,13 +60,14 @@ const ProfilHeader = ({ navigation, user }) => {
           <Text semibold>Modifier le profil</Text>
         </Button>
       ) : (
-        <Button my="2" py="5px" colorScheme="light" borderColor="dark.500">
-          <Text semibold>S&apos;abonner</Text>
+        <Button my="2" py="5px">
+          <Text bold color="white">S&apos;abonner</Text>
         </Button>
       )}
       {
         showFollowers && (
           <Modal
+            navigation={navigation}
             user={user}
             show={showFollowers}
             handleClose={handleCloseFollowers}
@@ -80,6 +80,7 @@ const ProfilHeader = ({ navigation, user }) => {
       {
         showFollowing && (
           <Modal
+            navigation={navigation}
             user={user}
             show={showFollowing}
             handleClose={handleCloseFollowing}
