@@ -66,6 +66,7 @@ const UsersModal = ({
         >
           <HStack alignItems="center">
             <Image
+              style={{ overlayColor: 'rgb(249, 250, 251)' }} // handle GIF images rounded
               resizeMode="cover"
               source={{ uri: `${config.SERVER_URL}${item.profile_picture}` }}
               width="30px"

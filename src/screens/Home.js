@@ -9,7 +9,7 @@ import {
   StyleSheet,
 } from 'react-native';
 import {
-  Text, Toast, HStack, Image, VStack,
+  Text, Toast, HStack, VStack, Image,
 } from 'native-base';
 import { postActions } from '../redux/actions';
 import Loading from '../components/Loading';
@@ -79,12 +79,13 @@ function HomeScreen() {
           <VStack my="2" key={post.id} width="100%">
             <HStack p="3" w="100%" display="flex" alignItems="center">
               <Image
+                style={{ overlayColor: 'rgb(242, 242, 242)' }} // handle GIF images rounded
+                resizeMode="cover"
                 source={{ uri: `${config.SERVER_URL}${post.author.profile_picture}` }}
                 width="40px"
                 height="40px"
                 alt="Profil Picture"
                 rounded="full"
-                resizeMode="cover"
               />
               <Text ml="3" bold fontSize="md">{post.author.username}</Text>
             </HStack>
@@ -95,7 +96,7 @@ function HomeScreen() {
               height={post.height * (Dimensions.get('window').width / post.width)}
             />
             <VStack p="3" width="100%">
-              {post.caption && (
+              {post.caption !== '' && (
                 <HStack display="flex" alignItems="center">
                   <Text mr="2" bold>{post.author.username}</Text>
                   <Text>{post.caption}</Text>

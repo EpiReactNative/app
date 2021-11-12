@@ -148,7 +148,7 @@ const EditUserScreen = ({ route, navigation }) => {
           <Image
             resizeMode="cover"
             style={{
-              width: 100, height: 100, borderRadius: 50, borderWidth: 2, borderColor: '#d6d3d1',
+              width: 100, height: 100, borderRadius: 50, borderWidth: 2, borderColor: '#d6d3d1', overlayColor: 'rgb(242, 242, 242)',
             }}
             source={inputs.profile_picture}
             alt="Image Profil"

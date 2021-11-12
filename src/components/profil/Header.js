@@ -23,6 +23,7 @@ const ProfilHeader = ({ navigation, user }) => {
     <Stack w="100%" p="4">
       <HStack w="100%" display="flex" alignItems="center" justifyContent="space-between">
         <Image
+          style={{ overlayColor: 'rgb(242, 242, 242)' }} // handle GIF images rounded
           resizeMode="cover"
           source={{ uri: `${user.profile_picture}` }}
           width="90px"
