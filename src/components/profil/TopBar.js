@@ -28,7 +28,7 @@ const ProfilTopBar = ({ user }) => {
       <Stack w="100%" px="4" py="3">
         <HStack w="100%" justifyContent="space-between" alignItems="center">
           <Text bold fontSize="xl">{user.username}</Text>
-          {selfuser.id === user.id && (
+          {selfuser && user && selfuser.id === user.id && (
             <Button p="0" variant="unstyled" onPress={() => setShowModal(true)}>
               <Icon as={Ionicons} name="log-out-outline" size="28px" color="#262626" />
             </Button>

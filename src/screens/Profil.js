@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
-import { useDispatch } from 'react-redux';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { useIsFocused } from '@react-navigation/native';
 import {
@@ -27,7 +26,6 @@ function ProfilStackScreen({ id }) {
   const [mounted, setMounted] = useState(false);
   const [user, setUser] = useState(undefined);
   const isFocused = useIsFocused();
-  const dispatch = useDispatch();
 
   const fetchData = async () => {
     setMounted(false);
@@ -62,7 +60,7 @@ function ProfilStackScreen({ id }) {
       setMounted(false);
     };
     // Comment éviter le boucle inf si on ajoute fetchData() dans les dépendances du useEffect ?
-  }, [isFocused, dispatch]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [isFocused]); // eslint-disable-line react-hooks/exhaustive-deps
 
   if (!mounted || !user) {
     return <Loading />;

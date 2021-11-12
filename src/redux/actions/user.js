@@ -103,10 +103,18 @@ function getFollowing(id, limit, offset) {
 }
 
 function updateUser(id, payload) {
+  const formData = new FormData();
+  if (payload.username) formData.append('username', payload.username);
+  if (payload.password) formData.append('password', payload.password);
+  if (payload.email) formData.append('email', payload.email);
+  if (payload.first_name) formData.append('first_name', payload.first_name);
+  if (payload.last_name) formData.append('last_name', payload.last_name);
+  if (payload.bio) formData.append('bio', payload.bio);
+  if (payload.profile_picture) formData.append('profile_picture', payload.profile_picture);
   const requestOptions = {
     method: 'PATCH',
-    headers: { 'Content-Type': 'application/json', Authorization: authHeader().Authorization },
-    body: JSON.stringify(payload),
+    headers: { Authorization: authHeader().Authorization },
+    body: formData,
   };
 
   return fetch(`${config.SERVER_URL}/user/${id}/`, requestOptions)

@@ -112,8 +112,8 @@ const EditUserScreen = ({ route, navigation }) => {
         payload.profile_picture = inputs.profile_picture.uri;
       }
       userActions.updateUser(route.params.user.id, payload).then(() => {
-        setEditing(false);
         route.params.fetchData();
+        setEditing(false);
         navigation.popToTop();
       }).catch(() => {
         Toast.show(toasts.globalError);

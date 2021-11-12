@@ -9,11 +9,12 @@ import {
   StyleSheet,
 } from 'react-native';
 import {
-  Text, Toast, Box, Image,
+  Text, Toast, HStack, Image, VStack,
 } from 'native-base';
 import { postActions } from '../redux/actions';
 import Loading from '../components/Loading';
 import toasts from '../redux/helpers/toasts';
+import config from '../redux/helpers/config';
 
 const styles = StyleSheet.create({
   container: {
@@ -74,54 +75,35 @@ function HomeScreen() {
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
         }
       >
-        {posts.map(
-          (post) => (
-            (
-              <Box key={post.id} width="100%">
-                <Box
-                  style={{
-                    flexDirection: 'row',
-                    width: '100%',
-                    marginTop: '3%',
-                    marginBottom: '5%',
-                  }}
-                >
-                  <Image
-                    source={{
-                      uri:
-                        `https://epigrambe.herokuapp.com${post.author.profile_picture}`,
-                    }}
-                    width="8%"
-                    height="100%"
-                    style={{
-                      marginLeft: '2%',
-                      borderRadius: 20,
-                      marginTop: '1%',
-                    }}
-                    alt="test"
-                  />
-                  <Text style={{ marginTop: '2%', marginLeft: '3%' }}>
-                    {post.author.username}
-                  </Text>
-                </Box>
-                <Image
-                  source={{ uri: post.image }}
-                  alt="Post Image"
-                  width={Dimensions.get('window').width}
-                  height={Dimensions.get('window').width}
-                />
-                <Box style={{ flexDirection: 'row' }}>
-                  <Text style={{ marginTop: '2%', marginLeft: '3%' }}>
-                    {post.author.username}
-                  </Text>
-                  <Text style={{ marginTop: '2%', marginLeft: '3%' }}>
-                    {post.caption}
-                  </Text>
-                </Box>
-              </Box>
-            )
-          ),
-        )}
+        {posts.map((post) => (
+          <VStack my="2" key={post.id} width="100%">
+            <HStack p="3" w="100%" display="flex" alignItems="center">
+              <Image
+                source={{ uri: `${config.SERVER_URL}${post.author.profile_picture}` }}
+                width="40px"
+                height="40px"
+                alt="Profil Picture"
+                rounded="full"
+                resizeMode="cover"
+              />
+              <Text ml="3" bold fontSize="md">{post.author.username}</Text>
+            </HStack>
+            <Image
+              source={{ uri: post.image }}
+              alt="Post"
+              width={Dimensions.get('window').width}
+              height={post.height * (Dimensions.get('window').width / post.width)}
+            />
+            <VStack p="3" width="100%">
+              {post.caption && (
+                <HStack display="flex" alignItems="center">
+                  <Text mr="2" bold>{post.author.username}</Text>
+                  <Text>{post.caption}</Text>
+                </HStack>
+              )}
+            </VStack>
+          </VStack>
+        ))}
       </ScrollView>
     </SafeAreaView>
   );
