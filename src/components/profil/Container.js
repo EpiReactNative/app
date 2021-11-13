@@ -2,8 +2,10 @@ import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { useAsyncEffect } from 'use-async-effect';
 import {
-  HStack, Image, Box, Center, Icon, Toast,
+  HStack, Image, Box, Center, Icon, Toast, ScrollView, Stack, ZStack,
+  Spinner,
 } from 'native-base';
+import _ from 'lodash';
 import { Dimensions, Pressable } from 'react-native';
 import { TabView } from 'react-native-tab-view';
 import { Ionicons } from '@expo/vector-icons';
@@ -17,15 +19,31 @@ const initialLayout = { width: Dimensions.get('window').width };
 
 const PostsScreen = ({ user }) => {
   const [mounted, setMounted] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [posts, setPosts] = useState(undefined);
   const limit = 12;
+  const [offset, setOffset] = useState(0);
   const width = (Dimensions.get('window').width - 6) * (1 / 3);
   const height = width;
+
+  const loadMore = _.debounce(() => {
+    userActions.getPosts(user.id, limit, offset).then((data) => {
+      if (data.results.length) {
+        setPosts([...posts, ...data.results]);
+        setOffset(offset + data.results.length);
+      }
+      setLoading(false);
+    }).catch(() => {
+      Toast.show(toasts.globalError);
+      setLoading(false);
+    });
+  }, 500);
 
   useAsyncEffect(async (isMounted) => {
     if (isMounted()) {
       userActions.getPosts(user.id, limit, 0).then((data) => {
         setPosts(data.results);
+        setOffset(0 + data.results.length);
         if (isMounted()) setMounted(true);
       }).catch(() => {
         Toast.show(toasts.globalError);
@@ -37,7 +55,7 @@ const PostsScreen = ({ user }) => {
   const getChunks = () => {
     const chunkSize = 3;
     return [...Array(Math.ceil(posts.length / chunkSize))]
-      .map((_, i) => ({ id: i, posts: posts.slice(i * chunkSize, i * chunkSize + chunkSize) }));
+      .map((item, i) => ({ id: i, posts: posts.slice(i * chunkSize, i * chunkSize + chunkSize) }));
   };
 
   const getMargin = (i) => {
@@ -49,22 +67,48 @@ const PostsScreen = ({ user }) => {
     return null;
   }
 
+  const renderItem = ({ chunk }) => (
+    <HStack key={chunk.id} mb="3px" w="100%" flexWrap="wrap">
+      {chunk.posts.map((post, i) => (
+        <Image
+          mr={getMargin(i)}
+          key={post.id}
+          resizeMode="cover"
+          source={{ uri: `${config.SERVER_URL}${post.image}` }}
+          alt="Post Image"
+          width={width}
+          height={height}
+        />
+      ))}
+    </HStack>
+  );
+
+  const isCloseToBottom = ({ layoutMeasurement, contentOffset, contentSize }) => {
+    const paddingToBottom = 10;
+    return layoutMeasurement.height + contentOffset.y >= contentSize.height - paddingToBottom;
+  };
+
   return (
-    getChunks().map((chunk) => (
-      <HStack key={chunk.id} mb="3px" w="100%" flexWrap="wrap">
-        {chunk.posts.map((post, i) => (
-          <Image
-            mr={getMargin(i)}
-            key={post.id}
-            resizeMode="cover"
-            source={{ uri: `${config.SERVER_URL}${post.image}` }}
-            alt="Post Image"
-            width={width}
-            height={height}
-          />
-        ))}
-      </HStack>
-    ))
+    <ScrollView
+      data={getChunks}
+      renderItem={renderItem}
+      onScroll={({ nativeEvent }) => {
+        if (!loading && isCloseToBottom(nativeEvent)) {
+          setLoading(true);
+          loadMore();
+        }
+      }}
+      scrollEventThrottle={400}
+    >
+      <Stack pb="8">
+        {getChunks().map((chunk) => renderItem({ chunk }))}
+        {loading && (
+          <ZStack mt="4" justifyContent="center" alignItems="center">
+            <Spinner color="#262626" />
+          </ZStack>
+        )}
+      </Stack>
+    </ScrollView>
   );
 };
 

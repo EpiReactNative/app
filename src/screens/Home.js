@@ -9,13 +9,13 @@ import {
   StyleSheet,
 } from 'react-native';
 import {
-  Text, Toast, HStack, VStack, Image,
+  Text, Toast, HStack, VStack, Image, Button, Stack,
 } from 'native-base';
-import { postActions } from '../redux/actions';
+import _ from 'lodash';
+import { postActions, authenticationActions } from '../redux/actions';
 import Loading from '../components/Loading';
 import toasts from '../redux/helpers/toasts';
 import config from '../redux/helpers/config';
-import { userActions } from '../redux/actions';
 
 const styles = StyleSheet.create({
   container: {
@@ -46,17 +46,14 @@ function HomeScreen() {
   // const get = userActions.getPosts,
 
   const loadMore = _.debounce(() => {
-    console.log("Dans loadMore")
-
-      postActions.getPosts(limit, offset).then((data) => {
-        console.log(data)
+    console.log('Dans loadMore');
+    postActions.getPosts(limit, offset).then((data) => {
       if (data.results.length) {
         setItems([...items, ...data.results]);
         setOffset(offset + data.results.length);
       }
       setLoading(false);
-    }).catch((error) => {
-      console.log(error)
+    }).catch(() => {
       Toast.show(toasts.globalError);
       setLoading(false);
     });
@@ -89,8 +86,19 @@ function HomeScreen() {
     }
   }, []);
 
+  const handleLogout = () => {
+    authenticationActions.logout();
+  };
+
   if (!mounted) {
-    return <Loading />;
+    return (
+      <Stack>
+        <Button mr="3" p="0" variant="unstyled" onPress={handleLogout}>
+          <Text>Déconnexion</Text>
+        </Button>
+        <Loading />
+      </Stack>
+    );
   }
   const isCloseToBottom = ({ layoutMeasurement, contentOffset, contentSize }) => {
     const paddingToBottom = 10;
