@@ -28,14 +28,14 @@ function uploadPost({ image, caption }) {
     });
 }
 
-function getPosts() {
+function getPosts(limit, offset) {
   const requestOptions = {
     method: 'GET',
     headers: { 'Content-Type': 'application/json', Authorization: authHeader().Authorization },
   };
 
   store.dispatch({ type: uploadConstants.UPLOAD_REQUEST });
-  return fetch(`${config.SERVER_URL}/post/`, requestOptions)
+  return fetch(`${config.SERVER_URL}/post/?limit=${limit}&offset=${offset}`, requestOptions)
     .then(async (response) => {
       if (response.ok) {
         return response.json();

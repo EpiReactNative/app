@@ -15,6 +15,7 @@ import { postActions } from '../redux/actions';
 import Loading from '../components/Loading';
 import toasts from '../redux/helpers/toasts';
 import config from '../redux/helpers/config';
+import { userActions } from '../redux/actions';
 
 const styles = StyleSheet.create({
   container: {
@@ -31,11 +32,35 @@ function HomeScreen() {
   const [mounted, setMounted] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
   const [posts, setPosts] = useState([]);
+  const [loading, setLoading] = useState(false);
+
   // const getImageSize = (image) => {
   //   const { width } = Dimensions.get('window');
   //   const height = image.offsetHeight / (image.offsetWidth / width);
   //   return { width, height };
   // };
+
+  const [items, setItems] = useState([]);
+  const limit = 8;
+  const [offset, setOffset] = useState(0);
+  // const get = userActions.getPosts,
+
+  const loadMore = _.debounce(() => {
+    console.log("Dans loadMore")
+
+      postActions.getPosts(limit, offset).then((data) => {
+        console.log(data)
+      if (data.results.length) {
+        setItems([...items, ...data.results]);
+        setOffset(offset + data.results.length);
+      }
+      setLoading(false);
+    }).catch((error) => {
+      console.log(error)
+      Toast.show(toasts.globalError);
+      setLoading(false);
+    });
+  }, 500);
 
   const onRefresh = useCallback(() => {
     setRefreshing(true);
@@ -67,6 +92,10 @@ function HomeScreen() {
   if (!mounted) {
     return <Loading />;
   }
+  const isCloseToBottom = ({ layoutMeasurement, contentOffset, contentSize }) => {
+    const paddingToBottom = 10;
+    return layoutMeasurement.height + contentOffset.y >= contentSize.height - paddingToBottom;
+  };
 
   return (
     <SafeAreaView style={styles.container}>
@@ -74,6 +103,13 @@ function HomeScreen() {
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
         }
+        onScroll={({ nativeEvent }) => {
+          if (!loading && isCloseToBottom(nativeEvent)) {
+            setLoading(true);
+            loadMore();
+          }
+        }}
+        scrollEventThrottle={400}
       >
         {posts.map((post) => (
           <VStack my="2" key={post.id} width="100%">
