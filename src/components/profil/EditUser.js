@@ -6,7 +6,6 @@ import { Image } from 'react-native';
 import {
   Stack, Text, Input, HStack, Icon, Button, VStack, Spinner, Toast,
 } from 'native-base';
-import config from '../../redux/helpers/config';
 import ImagePickerTools from '../../redux/helpers/ImagePicker';
 import { userActions } from '../../redux/actions';
 import toasts from '../../redux/helpers/toasts';
@@ -21,7 +20,7 @@ const EditUserScreen = ({ route, navigation }) => {
     first_name: route.params.user.first_name,
     last_name: route.params.user.last_name,
     bio: route.params.user.bio,
-    profile_picture: { uri: `${config.SERVER_URL}${route.params.user.profile_picture}` },
+    profile_picture: { uri: route.params.user.profile_picture },
   });
 
   const handleClick = () => setShowPassword(!showPassword);
@@ -112,7 +111,6 @@ const EditUserScreen = ({ route, navigation }) => {
         payload.profile_picture = inputs.profile_picture.uri;
       }
       userActions.updateUser(route.params.user.id, payload).then(() => {
-        route.params.fetchData();
         setEditing(false);
         navigation.popToTop();
       }).catch(() => {
@@ -246,7 +244,6 @@ EditUserScreen.propTypes = {
         bio: PropTypes.string.isRequired,
         profile_picture: PropTypes.string.isRequired,
       }).isRequired,
-      fetchData: PropTypes.func.isRequired,
     }).isRequired,
   }).isRequired,
   navigation: PropTypes.shape({
