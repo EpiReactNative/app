@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
+import Constants from 'expo-constants';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { MaterialCommunityIcons, Ionicons } from '@expo/vector-icons';
 import {
@@ -87,13 +88,12 @@ function SearchScreen({ navigation }) {
     return layoutMeasurement.height + contentOffset.y >= contentSize.height - paddingToBottom;
   };
 
-  const onSearch = _.debounce(({ target }) => {
-    console.log('Searching...');
-    if (!target.value || target.value.length < 3) {
+  const onSearch = _.debounce((value) => {
+    if (!value || value.length < 3) {
       setResults([]);
       return;
     }
-    userActions.searchUsers({ search: target.value }).then((data) => {
+    userActions.searchUsers({ search: value }).then((data) => {
       setResults(data);
     }).catch(() => {
       Toast.show(toasts.globalError);
@@ -171,12 +171,12 @@ function SearchScreen({ navigation }) {
   };
 
   return (
-    <Stack h="100%" w="100%">
+    <Stack mt={Constants.statusBarHeight} h="100%" w="100%">
       <Stack p="2">
         <Input
           placeholder="Rechercher un utilisateur"
           width="100%"
-          onChange={(changes) => onSearch(changes)}
+          onChangeText={onSearch}
           bg="transparent"
           InputLeftElement={(
             <Icon
