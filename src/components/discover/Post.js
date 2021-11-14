@@ -1,13 +1,16 @@
-import React, { useState } from 'react';
+import React, { useState, useLayoutEffect } from 'react';
 import PropTypes from 'prop-types';
 import { Ionicons } from '@expo/vector-icons';
 import { Dimensions } from 'react-native';
 import {
-  Text, Image, HStack, Box, VStack,
+  Text, Image, HStack, Box, VStack, Stack, Button, Icon, Spinner, Toast
 } from 'native-base';
 import config from '../../redux/helpers/config';
+import { postActions } from '../../redux/actions';
+import toasts from '../../redux/helpers/toasts';
 
-const Post = ({ route }) => {
+const Post = ({ route, navigation }) => {
+  const [editing, setEditing] = useState(false);
   const [post] = useState({
     id: route.params.post.id,
     author: route.params.post.author,
@@ -21,6 +24,35 @@ const Post = ({ route }) => {
     },
   });
 
+  useLayoutEffect(() => {
+    const handleSubmit = () => {
+      setEditing(true);
+      console.log(post.id);
+      postActions.deletePosts(post.id).then(() => {
+        setEditing(false);
+        navigation.goBack();
+      }).catch(() => {
+        Toast.show(toasts.globalError);
+        setEditing(false);
+      });
+    };
+
+  navigation.setOptions({
+    headerRight: () => (
+      <Stack>
+        {editing ? (
+          <Stack mr="5">
+            <Spinner color="#06B6D4" />
+          </Stack>
+        ) : (
+          <Button variant="unstyled" onPress={handleSubmit}>
+            <Icon as={Ionicons} name="trash-bin-outline" size="md" color="red" />
+          </Button>
+        )}
+      </Stack>
+    ),
+  });
+}, [navigation, editing, route, post]);
   return (
     <VStack w="100%" h="100%">
       <Box p="4">
