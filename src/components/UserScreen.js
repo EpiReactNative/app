@@ -18,8 +18,11 @@ const UserScreen = ({ route, navigation }) => {
   const isFocused = useIsFocused();
 
   const fetchData = async () => {
-    setMounted(false);
-    if (!mounted) setMounted(false);
+    // On recharge la page uniquement si on pointe vers l'utilisateur connecté
+    if (selfuser && user && selfuser.id !== user.id) {
+      setMounted(true);
+      return;
+    }
     const id = route.params.id === -1 ? null : route.params.id;
     userActions.whoami().then((selfUserData) => {
       if (id && selfUserData && id !== selfUserData.id) {
@@ -101,7 +104,7 @@ const UserScreen = ({ route, navigation }) => {
   return (
     <Stack w="100%" h="100%">
       <ProfilHeader user={user} navigation={navigation} />
-      <ProfilContainer user={user} />
+      <ProfilContainer user={user} navigation={navigation} />
     </Stack>
   );
 };

@@ -64,6 +64,25 @@ function getPosts(id, limit, offset) {
     });
 }
 
+function getLikes(id, limit, offset) {
+  const requestOptions = {
+    method: 'GET',
+    headers: { 'Content-Type': 'application/json', Authorization: authHeader().Authorization },
+  };
+
+  return fetch(`${config.SERVER_URL}/user/${id}/likes/?limit=${limit}&offset=${offset}`, requestOptions)
+    .then(async (response) => {
+      if (response.ok) {
+        return response.json();
+      }
+      throw new Error(response);
+    })
+    .then((data) => data)
+    .catch((error = undefined) => {
+      throw new Error(error);
+    });
+}
+
 function getFollowers(id, limit, offset) {
   const requestOptions = {
     method: 'GET',
@@ -134,6 +153,7 @@ const userActions = {
   whoami,
   getUser,
   getPosts,
+  getLikes,
   getFollowers,
   getFollowing,
   updateUser,

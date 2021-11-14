@@ -48,9 +48,50 @@ function getPosts(limit, offset) {
     });
 }
 
+function getLikes(id, limit, offset) {
+  const requestOptions = {
+    method: 'GET',
+    headers: { 'Content-Type': 'application/json', Authorization: authHeader().Authorization },
+  };
+
+  store.dispatch({ type: uploadConstants.UPLOAD_REQUEST });
+  return fetch(`${config.SERVER_URL}/post/${id}/likes/?limit=${limit}&offset=${offset}`, requestOptions)
+    .then(async (response) => {
+      if (response.ok) {
+        return response.json();
+      }
+      throw new Error(response);
+    })
+    .then((data) => data)
+    .catch((error = undefined) => {
+      throw new Error(error);
+    });
+}
+
+function likePost({ id }) {
+  const requestOptions = {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', Authorization: authHeader().Authorization },
+  };
+
+  return fetch(`${config.SERVER_URL}/post/${id}/like/`, requestOptions)
+    .then(async (response) => {
+      if (response.ok) {
+        return response.json();
+      }
+      throw new Error(response);
+    })
+    .then((data) => data)
+    .catch((error = undefined) => {
+      throw new Error(error);
+    });
+}
+
 const postActions = {
   uploadPost,
   getPosts,
+  getLikes,
+  likePost,
 };
 
 export default postActions;

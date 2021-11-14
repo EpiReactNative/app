@@ -6,13 +6,12 @@ import {
   ZStack, Center, Pressable,
 } from 'native-base';
 import _ from 'lodash';
-import { userActions } from '../../redux/actions';
+import { userActions, postActions } from '../../redux/actions';
 import toasts from '../../redux/helpers/toasts';
-import config from '../../redux/helpers/config';
 import Loading from '../Loading';
 
 const UsersModal = ({
-  show, handleClose, user, name, title, empty, navigation,
+  show, handleClose, user, name, title, empty, navigation, id,
 }) => {
   const [mounted, setMounted] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -22,10 +21,11 @@ const UsersModal = ({
   const get = {
     followers: userActions.getFollowers,
     following: userActions.getFollowing,
+    likes: postActions.getLikes,
   };
 
   const loadMore = _.debounce(() => {
-    get[name](user.id, limit, offset).then((data) => {
+    get[name](id, limit, offset).then((data) => {
       if (data.results.length) {
         setItems([...items, ...data.results]);
         setOffset(offset + data.results.length);
@@ -39,7 +39,7 @@ const UsersModal = ({
 
   useAsyncEffect(async (isMounted) => {
     if (isMounted()) {
-      get[name](user.id, limit, 0).then((data) => {
+      get[name](id, limit, 0).then((data) => {
         setItems(data.results);
         setOffset(0 + data.results.length);
         if (isMounted()) setMounted(true);
@@ -68,7 +68,7 @@ const UsersModal = ({
             <Image
               style={{ overlayColor: 'rgb(249, 250, 251)' }} // handle GIF images rounded
               resizeMode="cover"
-              source={{ uri: `${config.SERVER_URL}${item.profile_picture}` }}
+              source={{ uri: item.profile_picture }}
               width="30px"
               height="30px"
               alt="Image Profil"
@@ -86,13 +86,13 @@ const UsersModal = ({
             </VStack>
           </HStack>
         </Pressable>
-        {
+        {user.id !== item.id && (
           user.following.includes(item.id) ? (
             <Button variant="outline" py="1" px="2" size="sm">Se désabonner</Button>
           ) : (
             <Button py="1" px="2" size="sm">S&apos;abonner</Button>
           )
-        }
+        )}
       </HStack>
     );
   };
@@ -159,6 +159,7 @@ UsersModal.propTypes = {
   handleClose: PropTypes.func.isRequired,
   name: PropTypes.string.isRequired,
   title: PropTypes.string.isRequired,
+  id: PropTypes.number.isRequired,
   empty: PropTypes.string.isRequired,
   navigation: PropTypes.shape({
     dispatch: PropTypes.func.isRequired,

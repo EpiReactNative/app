@@ -4,7 +4,7 @@ import { useSelector } from 'react-redux';
 import {
   Button, Stack, Text, HStack, VStack, Image,
 } from 'native-base';
-import Modal from './UsersModal';
+import Modal from './Modal';
 
 const ProfilHeader = ({ navigation, user }) => {
   const { selfuser } = useSelector((state) => state.user);
@@ -70,6 +70,7 @@ const ProfilHeader = ({ navigation, user }) => {
           <Modal
             navigation={navigation}
             user={user}
+            id={user.id}
             show={showFollowers}
             handleClose={handleCloseFollowers}
             name="followers"
@@ -83,6 +84,7 @@ const ProfilHeader = ({ navigation, user }) => {
           <Modal
             navigation={navigation}
             user={user}
+            id={user.id}
             show={showFollowing}
             handleClose={handleCloseFollowing}
             name="following"
