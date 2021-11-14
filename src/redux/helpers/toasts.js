@@ -16,10 +16,17 @@ const registerSuccess = {
   placement: 'top',
 };
 
+const deleteSuccess = {
+  title: 'Publication supprimée',
+  status: 'success',
+  placement: 'top',
+};
+
 const toasts = {
   globalError,
   loginFailed,
   registerSuccess,
+  deleteSuccess,
 };
 
 export default toasts;

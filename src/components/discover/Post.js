@@ -30,8 +30,10 @@ const Post = ({ route, navigation }) => {
       console.log(post.id);
       postActions.deletePosts(post.id).then(() => {
         setEditing(false);
-        navigation.goBack();
-      }).catch(() => {
+        Toast.show(toasts.deleteSuccess);
+        navigation.popToTop();
+      }).catch((error) => {
+        console.log(error);
         Toast.show(toasts.globalError);
         setEditing(false);
       });
@@ -125,6 +127,7 @@ Post.propTypes = {
     navigate: PropTypes.func.isRequired,
     setParams: PropTypes.func.isRequired,
     setOptions: PropTypes.func.isRequired,
+    popToTop: PropTypes.func.isRequired,
     state: PropTypes.shape({
       key: PropTypes.string.isRequired,
       routeName: PropTypes.string.isRequired,
