@@ -171,10 +171,10 @@ function SearchScreen({ navigation }) {
   };
 
   return (
-    <Stack style={{marginTop: Constants.statusBarHeight}} h="100%" w="100%">
+    <Stack style={{ marginTop: Constants.statusBarHeight }} h="100%" w="100%">
       <Stack p="2">
         <Input
-          placeholder="Rechercher un utilisateur"
+          placeholder="Recherch>er un utilisateur"
           width="100%"
           onChangeText={onSearch}
           bg="transparent"
