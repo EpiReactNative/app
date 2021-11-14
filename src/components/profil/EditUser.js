@@ -2,7 +2,10 @@ import React, { useState, useLayoutEffect } from 'react';
 import PropTypes from 'prop-types';
 import { Ionicons, MaterialIcons } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
-import { Image } from 'react-native';
+import {
+  Image,
+  ScrollView,
+} from 'react-native';
 import {
   Stack, Text, Input, HStack, Icon, Button, VStack, Spinner, Toast,
 } from 'native-base';
@@ -137,96 +140,98 @@ const EditUserScreen = ({ route, navigation }) => {
   }, [navigation, editing, inputs, route]);
 
   return (
-    <Stack p="4" w="100%" h="100%">
-      <HStack mb="6" w="100%" alignItems="center" justifyContent="space-around">
-        <Button variant="outline" colorScheme="light" onPress={selectFromMediaLibrary} style={{ backgroundColor: 'white' }}>
-          <Icon as={Ionicons} name="image-outline" size="lg" color="#262626" />
-        </Button>
-        <VStack alignItems="center">
-          <Image
-            resizeMode="cover"
-            style={{
-              width: 100, height: 100, borderRadius: 50, borderWidth: 2, borderColor: '#d6d3d1', overlayColor: 'rgb(242, 242, 242)',
-            }}
-            source={inputs.profile_picture}
-            alt="Image Profil"
-          />
-          <Text mt="2" fontSize="sm">Changer la photo de profil</Text>
-        </VStack>
-        <Button variant="outline" colorScheme="light" onPress={selectFromCamera} style={{ backgroundColor: 'white' }}>
-          <Icon as={Ionicons} name="camera-outline" size="lg" color="#262626" />
-        </Button>
-      </HStack>
-      <Text color="light.500" fontSize="xs">Nom d&apos;utilisateur</Text>
-      <Input
-        mb="4"
-        size="md"
-        variant="underlined"
-        placeholder="Nom d'utilisateur"
-        value={inputs.username}
-        onChangeText={(value) => setInputs(() => ({ ...inputs, username: value }))}
-      />
-      <Text color="light.500" fontSize="xs">Email</Text>
-      <Input
-        mb="4"
-        size="md"
-        variant="underlined"
-        placeholder="Email"
-        type="email"
-        value={inputs.email}
-        onChangeText={(value) => setInputs(() => ({ ...inputs, email: value }))}
-      />
-      <Text color="light.500" fontSize="xs">Mot de passe</Text>
-      <Input
-        mb="4"
-        size="md"
-        variant="underlined"
-        placeholder="Mot de passe"
-        type={showPassword ? 'text' : 'password'}
-        InputRightElement={(
-          <Button
-            variant="unstyled"
-            onPress={handleClick}
-          >
-            <Icon
-              as={<MaterialIcons name={showPassword ? 'visibility' : 'visibility-off'} />}
-              size={5}
-              mr="2"
-              color="muted.400"
-            />
+    <ScrollView>
+      <Stack p="4" w="100%" h="100%">
+        <HStack mb="6" w="100%" alignItems="center" justifyContent="space-around">
+          <Button variant="outline" colorScheme="light" onPress={selectFromMediaLibrary} style={{ backgroundColor: 'white' }}>
+            <Icon as={Ionicons} name="image-outline" size="lg" color="#262626" />
           </Button>
-        )}
-        value={inputs.password}
-        onChangeText={(value) => setInputs(() => ({ ...inputs, password: value }))}
-      />
-      <Text color="light.500" fontSize="xs">Nom</Text>
-      <Input
-        mb="4"
-        size="md"
-        variant="underlined"
-        placeholder="Nom"
-        value={inputs.last_name}
-        onChangeText={(value) => setInputs(() => ({ ...inputs, last_name: value }))}
-      />
-      <Text color="light.500" fontSize="xs">Prénom</Text>
-      <Input
-        mb="4"
-        size="md"
-        variant="underlined"
-        placeholder="Prénom"
-        value={inputs.first_name}
-        onChangeText={(value) => setInputs(() => ({ ...inputs, first_name: value }))}
-      />
-      <Text color="light.500" fontSize="xs">Bio</Text>
-      <Input
-        mb="4"
-        size="md"
-        variant="underlined"
-        placeholder="Bio"
-        value={inputs.bio}
-        onChangeText={(value) => setInputs(() => ({ ...inputs, bio: value }))}
-      />
-    </Stack>
+          <VStack alignItems="center">
+            <Image
+              resizeMode="cover"
+              style={{
+                width: 100, height: 100, borderRadius: 50, borderWidth: 2, borderColor: '#d6d3d1', overlayColor: 'rgb(242, 242, 242)',
+              }}
+              source={inputs.profile_picture}
+              alt="Image Profil"
+            />
+            <Text mt="2" fontSize="sm">Changer la photo de profil</Text>
+          </VStack>
+          <Button variant="outline" colorScheme="light" onPress={selectFromCamera} style={{ backgroundColor: 'white' }}>
+            <Icon as={Ionicons} name="camera-outline" size="lg" color="#262626" />
+          </Button>
+        </HStack>
+        <Text color="light.500" fontSize="xs">Nom d&apos;utilisateur</Text>
+        <Input
+          mb="4"
+          size="md"
+          variant="underlined"
+          placeholder="Nom d'utilisateur"
+          value={inputs.username}
+          onChangeText={(value) => setInputs(() => ({ ...inputs, username: value }))}
+        />
+        <Text color="light.500" fontSize="xs">Email</Text>
+        <Input
+          mb="4"
+          size="md"
+          variant="underlined"
+          placeholder="Email"
+          type="email"
+          value={inputs.email}
+          onChangeText={(value) => setInputs(() => ({ ...inputs, email: value }))}
+        />
+        <Text color="light.500" fontSize="xs">Mot de passe</Text>
+        <Input
+          mb="4"
+          size="md"
+          variant="underlined"
+          placeholder="Mot de passe"
+          type={showPassword ? 'text' : 'password'}
+          InputRightElement={(
+            <Button
+              variant="unstyled"
+              onPress={handleClick}
+            >
+              <Icon
+                as={<MaterialIcons name={showPassword ? 'visibility' : 'visibility-off'} />}
+                size={5}
+                mr="2"
+                color="muted.400"
+              />
+            </Button>
+          )}
+          value={inputs.password}
+          onChangeText={(value) => setInputs(() => ({ ...inputs, password: value }))}
+        />
+        <Text color="light.500" fontSize="xs">Nom</Text>
+        <Input
+          mb="4"
+          size="md"
+          variant="underlined"
+          placeholder="Nom"
+          value={inputs.last_name}
+          onChangeText={(value) => setInputs(() => ({ ...inputs, last_name: value }))}
+        />
+        <Text color="light.500" fontSize="xs">Prénom</Text>
+        <Input
+          mb="4"
+          size="md"
+          variant="underlined"
+          placeholder="Prénom"
+          value={inputs.first_name}
+          onChangeText={(value) => setInputs(() => ({ ...inputs, first_name: value }))}
+        />
+        <Text color="light.500" fontSize="xs">Bio</Text>
+        <Input
+          mb="4"
+          size="md"
+          variant="underlined"
+          placeholder="Bio"
+          value={inputs.bio}
+          onChangeText={(value) => setInputs(() => ({ ...inputs, bio: value }))}
+        />
+      </Stack>
+    </ScrollView>
   );
 };
 

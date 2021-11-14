@@ -4,6 +4,9 @@ import PropTypes from 'prop-types';
 import { Dimensions } from 'react-native';
 import _ from 'lodash';
 import {
+  ScrollView,
+} from 'react-native';
+import {
   Stack, Text, TextArea, Image, Divider,
 } from 'native-base';
 import { uploadConstants } from '../../redux/constants';
@@ -28,28 +31,30 @@ const PublicationScreen = ({ route }) => {
   }, [handleChange, route]);
 
   return (
-    <Stack space={4} w="100%" h="100%" p="10" alignItems="center">
-      {route.params.image
-        && (
-          <Stack>
-            <Text mb="2" bold fontSize="md">Légende</Text>
-            <TextArea
-              mb="4"
-              textAlignVertical="top"
-              placeholder="Ajouter une légende..."
-              onChangeText={handleChange}
-            />
-            <Divider />
-            <Image
-              resizeMode="cover"
-              source={{ uri: route.params.image.uri }}
-              width={width}
-              height={height}
-              alt="Publication Image"
-            />
-          </Stack>
-        )}
-    </Stack>
+    <ScrollView>
+      <Stack space={4} w="100%" h="100%" p="10" alignItems="center">
+        {route.params.image
+          && (
+            <Stack>
+              <Text mb="2" bold fontSize="md">Légende</Text>
+              <TextArea
+                mb="4"
+                textAlignVertical="top"
+                placeholder="Ajouter une légende..."
+                onChangeText={handleChange}
+              />
+              <Divider />
+              <Image
+                resizeMode="cover"
+                source={{ uri: route.params.image.uri }}
+                width={width}
+                height={height}
+                alt="Publication Image"
+              />
+            </Stack>
+          )}
+      </Stack>
+    </ScrollView>
   );
 };
 
