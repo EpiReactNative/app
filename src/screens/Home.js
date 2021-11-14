@@ -46,7 +46,6 @@ function HomeScreen() {
   // const get = userActions.getPosts,
 
   const loadMore = _.debounce(() => {
-    console.log('Dans loadMore');
     postActions.getPosts(limit, offset).then((data) => {
       if (data.results.length) {
         setItems([...items, ...data.results]);

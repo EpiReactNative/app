@@ -11,10 +11,11 @@ import toasts from '../../redux/helpers/toasts';
 import Loading from '../Loading';
 
 const UsersModal = ({
-  show, handleClose, user, name, title, empty, navigation, id,
+  show, handleClose, target, name, title, empty, navigation, id,
 }) => {
   const [mounted, setMounted] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [user] = useState(target);
   const [items, setItems] = useState([]);
   const limit = 8;
   const [offset, setOffset] = useState(0);
@@ -56,6 +57,7 @@ const UsersModal = ({
     };
 
     const goToUser = () => {
+      handleClose();
       navigation.push('User', { id: item.id });
     };
 
@@ -150,11 +152,7 @@ const UsersModal = ({
 export default UsersModal;
 
 UsersModal.propTypes = {
-  user: PropTypes.shape({
-    id: PropTypes.number.isRequired,
-    profile_picture: PropTypes.string.isRequired,
-    following: PropTypes.arrayOf(PropTypes.number).isRequired,
-  }).isRequired,
+  target: PropTypes.shape({}).isRequired,
   show: PropTypes.bool.isRequired,
   handleClose: PropTypes.func.isRequired,
   name: PropTypes.string.isRequired,

@@ -3,8 +3,9 @@ import PropTypes from 'prop-types';
 import { useAsyncEffect } from 'use-async-effect';
 import {
   HStack, Image, Toast, ScrollView, Stack, ZStack,
-  Spinner,
+  Spinner, Text, Center, Icon,
 } from 'native-base';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 import _ from 'lodash';
 import { Dimensions, Pressable } from 'react-native';
 import { userActions } from '../../redux/actions';
@@ -94,26 +95,36 @@ const PostsContainer = ({ navigation, user, name }) => {
   };
 
   return (
-    <ScrollView
-      data={getChunks}
-      renderItem={renderItem}
-      onScroll={({ nativeEvent }) => {
-        if (!loading && isCloseToBottom(nativeEvent)) {
-          setLoading(true);
-          loadMore();
-        }
-      }}
-      scrollEventThrottle={400}
-    >
-      <Stack pb="8">
-        {getChunks().map((chunk) => renderItem({ chunk }))}
-        {loading && (
-          <ZStack mt="4" justifyContent="center" alignItems="center">
-            <Spinner color="#262626" />
-          </ZStack>
-        )}
-      </Stack>
-    </ScrollView>
+    <Stack h="100%" alignItems="center">
+      {posts.length === 0 ? (
+        <Center h="100%" flex={1}>
+          <Icon as={MaterialCommunityIcons} name="emoticon-sad-outline" color="light.500" />
+          <Text semibold color="light.500">Rien à afficher</Text>
+        </Center>
+      ) : (
+        <ScrollView
+          data={getChunks}
+          renderItem={renderItem}
+          onScroll={({ nativeEvent }) => {
+            if (!loading && isCloseToBottom(nativeEvent)) {
+              setLoading(true);
+              loadMore();
+            }
+          }}
+          scrollEventThrottle={400}
+          h="100%"
+        >
+          <Stack h="100%" pb="8">
+            {getChunks().map((chunk) => renderItem({ chunk }))}
+            {loading && (
+              <ZStack mt="4" justifyContent="center" alignItems="center">
+                <Spinner color="#262626" />
+              </ZStack>
+            )}
+          </Stack>
+        </ScrollView>
+      )}
+    </Stack>
   );
 };
 
