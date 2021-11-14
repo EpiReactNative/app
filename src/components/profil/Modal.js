@@ -12,12 +12,11 @@ import toasts from '../../redux/helpers/toasts';
 import Loading from '../Loading';
 
 const UsersModal = ({
-  show, handleClose, target, name, title, empty, navigation, id,
+  show, handleClose, name, title, empty, navigation, id,
 }) => {
   const { selfuser } = useSelector((state) => state.user);
   const [mounted, setMounted] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [user, setUser] = useState(target);
   const [items, setItems] = useState([]);
   const limit = 8;
   const [offset, setOffset] = useState(0);
@@ -28,8 +27,7 @@ const UsersModal = ({
   };
 
   const follow = (targetId) => {
-    userActions.follow(targetId).then((data) => {
-      setUser(data);
+    userActions.follow(targetId).then(() => {
     }).catch(() => {
       Toast.show(toasts.globalError);
     });
@@ -162,7 +160,6 @@ const UsersModal = ({
 export default UsersModal;
 
 UsersModal.propTypes = {
-  target: PropTypes.shape({}).isRequired,
   show: PropTypes.bool.isRequired,
   handleClose: PropTypes.func.isRequired,
   name: PropTypes.string.isRequired,

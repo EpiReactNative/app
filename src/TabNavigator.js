@@ -43,22 +43,7 @@ function TabNavigator() {
         headerShown: false,
       })}
     >
-      <Tab.Screen
-        name="Home"
-        component={HomeScreen}
-        options={{
-          title: 'Epigram',
-          headerStyle: {
-          },
-          headerShown: true,
-          headerTintColor: '#000',
-          headerTitleAlign: 'center',
-          headerTitleStyle: {
-            fontFamily: 'LeckerliOne_400Regular',
-            fontSize: 30,
-          },
-        }}
-      />
+      <Tab.Screen name="Home" component={HomeScreen} />
       <Tab.Screen name="Discover" component={DiscoverScreen} />
       <Tab.Screen name="UploadStackScreen" component={UploadScreen} />
       <Tab.Screen name="Profil" component={ProfilScreen} />

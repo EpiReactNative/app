@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { Ionicons } from '@expo/vector-icons';
 import { Dimensions } from 'react-native';
 import {
-  Text, Image, HStack, Box, VStack, Stack, Button, Icon, Spinner, Toast
+  Text, Image, HStack, Box, VStack, Stack, Button, Icon, Spinner, Toast,
 } from 'native-base';
 import config from '../../redux/helpers/config';
 import { postActions } from '../../redux/actions';
@@ -39,22 +39,22 @@ const Post = ({ route, navigation }) => {
       });
     };
 
-  navigation.setOptions({
-    headerRight: () => (
-      <Stack>
-        {editing ? (
-          <Stack mr="5">
-            <Spinner color="#06B6D4" />
-          </Stack>
-        ) : (
-          <Button variant="unstyled" onPress={handleSubmit}>
-            <Icon as={Ionicons} name="trash-bin-outline" size="md" color="red" />
-          </Button>
-        )}
-      </Stack>
-    ),
-  });
-}, [navigation, editing, route, post]);
+    navigation.setOptions({
+      headerRight: () => (
+        <Stack>
+          {editing ? (
+            <Stack mr="5">
+              <Spinner color="#06B6D4" />
+            </Stack>
+          ) : (
+            <Button variant="unstyled" onPress={handleSubmit}>
+              <Icon as={Ionicons} name="trash-bin-outline" size="md" color="red" />
+            </Button>
+          )}
+        </Stack>
+      ),
+    });
+  }, [navigation, editing, route, post]);
   return (
     <VStack w="100%" h="100%">
       <Box p="4">

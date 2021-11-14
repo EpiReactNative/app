@@ -30,10 +30,13 @@ function login(username, password) {
 }
 
 function register(username, email, password) {
+  const formData = new FormData();
+  formData.append('username', username);
+  formData.append('password', password);
+  formData.append('email', email);
   const requestOptions = {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ username, email, password }),
+    body: formData,
   };
 
   return fetch(`${config.SERVER_URL}/user/`, requestOptions)

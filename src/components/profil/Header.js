@@ -88,7 +88,6 @@ const ProfilHeader = ({
         showFollowers && (
           <Modal
             navigation={navigation}
-            target={user}
             id={user.id}
             show={showFollowers}
             handleClose={handleCloseFollowers}
@@ -102,7 +101,6 @@ const ProfilHeader = ({
         showFollowing && (
           <Modal
             navigation={navigation}
-            target={user}
             id={user.id}
             show={showFollowing}
             handleClose={handleCloseFollowing}

@@ -1,54 +1,33 @@
-import React, { useState, useCallback } from 'react';
+import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
-import { useAsyncEffect } from 'use-async-effect';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 import {
-  Dimensions,
   RefreshControl,
-  SafeAreaView,
   ScrollView,
-  StyleSheet,
 } from 'react-native';
 import {
-  Text, Toast, HStack, VStack, Image, Button, Stack,
+  Toast, Stack, ZStack, Spinner, Icon, Text, Center,
 } from 'native-base';
 import _ from 'lodash';
-import { postActions, authenticationActions } from '../redux/actions';
+import { userActions, authenticationActions } from '../redux/actions';
 import Loading from '../components/Loading';
 import toasts from '../redux/helpers/toasts';
-import config from '../redux/helpers/config';
+import Post from '../components/Post';
+import UserScreen from '../components/UserScreen';
+import PostScreen from '../components/PostScreen';
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  scrollView: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
-
-function HomeScreen() {
+function HomeScreen({ route, navigation }) {
   const [mounted, setMounted] = useState(false);
-  const [refreshing, setRefreshing] = useState(false);
-  const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(false);
-
-  // const getImageSize = (image) => {
-  //   const { width } = Dimensions.get('window');
-  //   const height = image.offsetHeight / (image.offsetWidth / width);
-  //   return { width, height };
-  // };
-
-  const [items, setItems] = useState([]);
-  const limit = 8;
+  const [posts, setPosts] = useState([]);
+  const limit = 5;
   const [offset, setOffset] = useState(0);
-  // const get = userActions.getPosts,
 
   const loadMore = _.debounce(() => {
-    postActions.getPosts(limit, offset).then((data) => {
+    userActions.getNews(limit, offset).then((data) => {
       if (data.results.length) {
-        setItems([...items, ...data.results]);
+        setPosts([...posts, ...data.results]);
         setOffset(offset + data.results.length);
       }
       setLoading(false);
@@ -56,105 +35,112 @@ function HomeScreen() {
       Toast.show(toasts.globalError);
       setLoading(false);
     });
-  }, 500);
+  }, 250);
 
-  const onRefresh = useCallback(() => {
-    setRefreshing(true);
-    postActions
-      .getPosts()
-      .then((data) => {
-        setPosts(data);
-      })
-      .catch(() => {
-        Toast.show(toasts.globalError);
-      })
-      .then(() => setRefreshing(false));
-  }, []);
-
-  useAsyncEffect(async (isMounted) => {
-    if (isMounted()) {
-      postActions
-        .getPosts()
+  const fetchData = async () => {
+    setMounted(false);
+    userActions.whoami().then(() => {
+      userActions
+        .getNews(limit, 0)
         .then((data) => {
-          setPosts(data);
-          if (isMounted()) setMounted(true);
+          setPosts(data.results);
+          setOffset(0 + data.results.length);
+          setMounted(true);
         })
         .catch(() => {
           Toast.show(toasts.globalError);
         });
-    }
-  }, []);
-
-  const handleLogout = () => {
-    authenticationActions.logout();
+    }).catch(() => {
+      Toast.show(toasts.globalError);
+      authenticationActions.logout();
+    });
   };
 
+  useEffect(() => {
+    async function myAsyncEffect() {
+      await fetchData();
+    }
+
+    myAsyncEffect();
+    // Comment éviter le boucle inf si on ajoute fetchData() dans les dépendances du useEffect ?
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
   if (!mounted) {
+    return <Loading />;
+  }
+
+  if (!posts.length) {
     return (
-      <Stack>
-        <Button mr="3" p="0" variant="unstyled" onPress={handleLogout}>
-          <Text>Déconnexion</Text>
-        </Button>
-        <Loading />
-      </Stack>
+      <Center h="100%" flex={1}>
+        <Icon as={MaterialCommunityIcons} name="emoticon-sad-outline" color="light.500" />
+        <Text semibold color="light.500">Rien à afficher</Text>
+      </Center>
     );
   }
+
   const isCloseToBottom = ({ layoutMeasurement, contentOffset, contentSize }) => {
     const paddingToBottom = 10;
     return layoutMeasurement.height + contentOffset.y >= contentSize.height - paddingToBottom;
   };
 
   return (
-    <SafeAreaView style={styles.container}>
-      <ScrollView
-        refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+    <ScrollView
+      refreshControl={
+        <RefreshControl onRefresh={fetchData} />
+      }
+      onScroll={({ nativeEvent }) => {
+        if (!loading && isCloseToBottom(nativeEvent)) {
+          setLoading(true);
+          loadMore();
         }
-        onScroll={({ nativeEvent }) => {
-          if (!loading && isCloseToBottom(nativeEvent)) {
-            setLoading(true);
-            loadMore();
-          }
-        }}
-        scrollEventThrottle={400}
-      >
+      }}
+      scrollEventThrottle={400}
+    >
+      <Stack w="100%" pb="10">
         {posts.map((post) => (
-          <VStack my="2" key={post.id} width="100%">
-            <HStack p="3" w="100%" display="flex" alignItems="center">
-              <Image
-                style={{ overlayColor: 'rgb(242, 242, 242)' }} // handle GIF images rounded
-                resizeMode="cover"
-                source={{ uri: `${config.SERVER_URL}${post.author.profile_picture}` }}
-                width="40px"
-                height="40px"
-                alt="Profil Picture"
-                rounded="full"
-              />
-              <Text ml="3" bold fontSize="md">{post.author.username}</Text>
-            </HStack>
-            <Image
-              source={{ uri: post.image }}
-              alt="Post"
-              width={Dimensions.get('window').width}
-              height={post.height * (Dimensions.get('window').width / post.width)}
-            />
-            <VStack p="3" width="100%">
-              {post.caption !== '' && (
-                <HStack display="flex" alignItems="center">
-                  <Text mr="2" bold>{post.author.username}</Text>
-                  <Text>{post.caption}</Text>
-                </HStack>
-              )}
-            </VStack>
-          </VStack>
+          <Post key={post.id} targetPost={post} route={route} navigation={navigation} />
         ))}
-      </ScrollView>
-    </SafeAreaView>
+        {loading && (
+          <ZStack mt="2" justifyContent="center" alignItems="center">
+            <Spinner size="lg" color="#262626" />
+          </ZStack>
+        )}
+      </Stack>
+    </ScrollView>
   );
 }
-export default HomeScreen;
+
+const ProfilStack = createNativeStackNavigator();
+
+function ProfilStackScreen() {
+  return (
+    <ProfilStack.Navigator>
+      <ProfilStack.Screen
+        name="News"
+        component={HomeScreen}
+        options={{
+          title: 'Epigram',
+          headerStyle: {
+          },
+          headerShown: true,
+          headerTintColor: '#000',
+          headerTitleAlign: 'center',
+          headerTitleStyle: {
+            fontFamily: 'LeckerliOne_400Regular',
+            fontSize: 30,
+          },
+        }}
+      />
+      <ProfilStack.Screen name="User" component={UserScreen} options={{ title: '' }} initialParams={{ id: -1 }} />
+      <ProfilStack.Screen name="Post" component={PostScreen} options={{ title: 'Publications' }} />
+    </ProfilStack.Navigator>
+  );
+}
+
+export default ProfilStackScreen;
 
 HomeScreen.propTypes = {
+  route: PropTypes.shape({}).isRequired,
   navigation: PropTypes.shape({
     dispatch: PropTypes.func.isRequired,
     goBack: PropTypes.func.isRequired,
