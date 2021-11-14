@@ -18,11 +18,6 @@ const UserScreen = ({ route, navigation }) => {
   const isFocused = useIsFocused();
 
   const fetchData = async () => {
-    // On recharge la page uniquement si on pointe vers l'utilisateur connecté
-    if (selfuser && user && selfuser.id !== user.id) {
-      setMounted(true);
-      return;
-    }
     const id = route.params.id === -1 ? null : route.params.id;
     userActions.whoami().then((selfUserData) => {
       if (id && selfUserData && id !== selfUserData.id) {
@@ -47,7 +42,12 @@ const UserScreen = ({ route, navigation }) => {
     }
 
     if (isFocused) {
-      myAsyncEffect();
+      // On recharge la page uniquement si on pointe vers l'utilisateur connecté
+      if (selfuser && user && selfuser.id !== user.id) {
+        setMounted(true);
+      } else {
+        myAsyncEffect();
+      }
     }
 
     return () => {
@@ -55,6 +55,14 @@ const UserScreen = ({ route, navigation }) => {
     };
     // Comment éviter le boucle inf si on ajoute fetchData() dans les dépendances du useEffect ?
   }, [isFocused]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const follow = () => {
+    userActions.follow(user.id).then(() => {
+      fetchData();
+    }).catch(() => {
+      Toast.show(toasts.globalError);
+    });
+  };
 
   const [showModal, setShowModal] = useState(false);
   useLayoutEffect(() => {
@@ -103,7 +111,7 @@ const UserScreen = ({ route, navigation }) => {
 
   return (
     <Stack w="100%" h="100%">
-      <ProfilHeader user={user} navigation={navigation} />
+      <ProfilHeader user={user} follow={follow} fetchData={fetchData} navigation={navigation} />
       <ProfilContainer user={user} navigation={navigation} />
     </Stack>
   );

@@ -149,6 +149,28 @@ function updateUser(id, payload) {
     });
 }
 
+function follow(id) {
+  const requestOptions = {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', Authorization: authHeader().Authorization },
+  };
+
+  return fetch(`${config.SERVER_URL}/user/${id}/follow/`, requestOptions)
+    .then(async (response) => {
+      if (response.ok) {
+        return response.json();
+      }
+      throw new Error(response);
+    })
+    .then((data) => {
+      store.dispatch({ type: userConstants.USER_UPDATE, user: data });
+      return data;
+    })
+    .catch((error = undefined) => {
+      throw new Error(error);
+    });
+}
+
 const userActions = {
   whoami,
   getUser,
@@ -157,6 +179,7 @@ const userActions = {
   getFollowers,
   getFollowing,
   updateUser,
+  follow,
 };
 
 export default userActions;

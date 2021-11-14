@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { useAsyncEffect } from 'use-async-effect';
+import { useSelector } from 'react-redux';
 import {
   Button, Toast, Modal, Text, HStack, Image, VStack, Stack, Spinner, ScrollView,
   ZStack, Center, Pressable,
@@ -13,9 +14,10 @@ import Loading from '../Loading';
 const UsersModal = ({
   show, handleClose, target, name, title, empty, navigation, id,
 }) => {
+  const { selfuser } = useSelector((state) => state.user);
   const [mounted, setMounted] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [user] = useState(target);
+  const [user, setUser] = useState(target);
   const [items, setItems] = useState([]);
   const limit = 8;
   const [offset, setOffset] = useState(0);
@@ -23,6 +25,14 @@ const UsersModal = ({
     followers: userActions.getFollowers,
     following: userActions.getFollowing,
     likes: postActions.getLikes,
+  };
+
+  const follow = (targetId) => {
+    userActions.follow(targetId).then((data) => {
+      setUser(data);
+    }).catch(() => {
+      Toast.show(toasts.globalError);
+    });
   };
 
   const loadMore = _.debounce(() => {
@@ -88,11 +98,11 @@ const UsersModal = ({
             </VStack>
           </HStack>
         </Pressable>
-        {user.id !== item.id && (
-          user.following.includes(item.id) ? (
-            <Button variant="outline" py="1" px="2" size="sm">Se désabonner</Button>
+        {selfuser.id !== item.id && (
+          selfuser.following.includes(item.id) ? (
+            <Button onPress={() => follow(item.id)} variant="subtle" py="1" px="2" size="sm">Se désabonner</Button>
           ) : (
-            <Button py="1" px="2" size="sm">S&apos;abonner</Button>
+            <Button onPress={() => follow(item.id)} py="1" px="2" size="sm">S&apos;abonner</Button>
           )
         )}
       </HStack>
@@ -104,13 +114,13 @@ const UsersModal = ({
     return layoutMeasurement.height + contentOffset.y >= contentSize.height - paddingToBottom;
   };
 
-  /* eslint-disable no-nested-ternary */
   return (
     <Modal isOpen={show} onClose={handleClose} size="sm">
       <Modal.Content>
         <Modal.CloseButton />
         <Modal.Header>{title}</Modal.Header>
         <Modal.Body p="0" height="300px">
+          {/* eslint-disable-next-line no-nested-ternary */}
           {!mounted ? (
             <Center flex={1}>
               <Loading />

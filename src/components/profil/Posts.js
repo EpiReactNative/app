@@ -112,9 +112,9 @@ const PostsContainer = ({ navigation, user, name }) => {
             }
           }}
           scrollEventThrottle={400}
-          h="100%"
+          w="100%"
         >
-          <Stack h="100%" pb="8">
+          <Stack w="100%" pb="8">
             {getChunks().map((chunk) => renderItem({ chunk }))}
             {loading && (
               <ZStack mt="4" justifyContent="center" alignItems="center">

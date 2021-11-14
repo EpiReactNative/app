@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import PropTypes from 'prop-types';
-import { Dimensions } from 'react-native';
 import _ from 'lodash';
 import {
   ScrollView,
+  Dimensions,
 } from 'react-native';
 import {
   Stack, Text, TextArea, Image, Divider,

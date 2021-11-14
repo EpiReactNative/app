@@ -2,18 +2,26 @@ import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { useSelector } from 'react-redux';
 import {
-  Button, Stack, Text, HStack, VStack, Image,
+  Button, Stack, Text, HStack, VStack, Image, Spinner,
 } from 'native-base';
 import Modal from './Modal';
 
-const ProfilHeader = ({ navigation, user }) => {
+const ProfilHeader = ({
+  navigation, user, follow, fetchData,
+}) => {
   const { selfuser } = useSelector((state) => state.user);
   const [showFollowers, setShowFollowers] = useState(false);
   const handleOpenFollowers = () => setShowFollowers(true);
-  const handleCloseFollowers = () => setShowFollowers(false);
+  const handleCloseFollowers = () => {
+    setShowFollowers(false);
+    fetchData();
+  };
   const [showFollowing, setShowFollowing] = useState(false);
   const handleOpenFollowing = () => setShowFollowing(true);
-  const handleCloseFollowing = () => setShowFollowing(false);
+  const handleCloseFollowing = () => {
+    setShowFollowing(false);
+    fetchData();
+  };
 
   const editUser = () => {
     navigation.navigate('EditUser', { user });
@@ -49,21 +57,32 @@ const ProfilHeader = ({ navigation, user }) => {
         </Button>
       </HStack>
       <Text mt="2" semibold>{user.bio}</Text>
-      {selfuser && selfuser.id === user.id ? (
-        <Button
-          my="2"
-          py="5px"
-          variant="outline"
-          colorScheme="light"
-          style={{ backgroundColor: 'white' }}
-          onPress={editUser}
-        >
-          <Text semibold>Modifier le profil</Text>
-        </Button>
+      {/* eslint-disable-next-line no-nested-ternary */}
+      {selfuser && user ? (
+        selfuser.id === user.id ? (
+          <Button
+            my="2"
+            py="5px"
+            variant="outline"
+            colorScheme="light"
+            style={{ backgroundColor: 'white' }}
+            onPress={editUser}
+          >
+            <Text semibold>Modifier le profil</Text>
+          </Button>
+        ) : (
+          <Button variant={selfuser && selfuser.following.includes(user.id) ? 'subtle' : 'solid'} my="2" py="5px" onPress={follow}>
+            {selfuser && selfuser.following.includes(user.id) ? (
+              <Text bold color="cyan.500">Se désabonner</Text>
+            ) : (
+              <Text bold color="rgb(242, 242, 242)">S&apos;abonner</Text>
+            )}
+          </Button>
+        )
       ) : (
-        <Button my="2" py="5px">
-          <Text bold color="white">S&apos;abonner</Text>
-        </Button>
+        <Stack my="2" p="1.5">
+          <Spinner color="#06B6D4" />
+        </Stack>
       )}
       {
         showFollowers && (
@@ -108,6 +127,8 @@ ProfilHeader.propTypes = {
     following: PropTypes.arrayOf(PropTypes.number).isRequired,
     bio: PropTypes.string.isRequired,
   }).isRequired,
+  follow: PropTypes.func.isRequired,
+  fetchData: PropTypes.func.isRequired,
   navigation: PropTypes.shape({
     dispatch: PropTypes.func.isRequired,
     goBack: PropTypes.func.isRequired,
