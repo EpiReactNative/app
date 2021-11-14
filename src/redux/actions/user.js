@@ -190,6 +190,28 @@ function getNews(limit, offset) {
     });
 }
 
+function searchUsers({ search }) {
+  const formData = new FormData();
+  if (search) formData.append('search', search);
+  const requestOptions = {
+    method: 'POST',
+    headers: { Authorization: authHeader().Authorization },
+    body: formData,
+  };
+
+  return fetch(`${config.SERVER_URL}/user/search/`, requestOptions)
+    .then(async (response) => {
+      if (response.ok) {
+        return response.json();
+      }
+      throw new Error(response);
+    })
+    .then((data) => data)
+    .catch((error = undefined) => {
+      throw new Error(error);
+    });
+}
+
 const userActions = {
   whoami,
   getUser,
@@ -200,6 +222,7 @@ const userActions = {
   getFollowing,
   updateUser,
   follow,
+  searchUsers,
 };
 
 export default userActions;

@@ -1,5 +1,5 @@
 import store from '../helpers/store';
-import { uploadConstants, deleteConstants } from '../constants';
+import { uploadConstants } from '../constants';
 import authHeader from '../helpers/auth-header';
 import config from '../helpers/config';
 
@@ -87,21 +87,20 @@ function likePost({ id }) {
     });
 }
 
-function deletePosts(id) {
+function deletePost({ id }) {
   const requestOptions = {
     method: 'DELETE',
     headers: { 'Content-Type': 'application/json', Authorization: authHeader().Authorization },
   };
 
-  store.dispatch({ type: deleteConstants.DELETE_REQUEST });
   return fetch(`${config.SERVER_URL}/post/${id}/`, requestOptions)
     .then(async (response) => {
       if (response.ok) {
-        return response.json();
+        return;
       }
       throw new Error(response);
     })
-    .then((data) => data)
+    .then(() => {})
     .catch((error = undefined) => {
       throw new Error(error);
     });
@@ -112,7 +111,7 @@ const postActions = {
   getPosts,
   getLikes,
   likePost,
-  deletePosts,
+  deletePost,
 };
 
 export default postActions;

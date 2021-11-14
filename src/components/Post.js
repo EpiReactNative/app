@@ -13,7 +13,7 @@ import {
 import Loading from './Loading';
 import { postActions } from '../redux/actions';
 import toasts from '../redux/helpers/toasts';
-import Modal from './profil/Modal';
+import UserModal from './profil/Modal';
 
 const Post = ({ navigation, targetPost }) => {
   const { selfuser } = useSelector((state) => state.user);
@@ -84,7 +84,7 @@ const Post = ({ navigation, targetPost }) => {
             <Icon as={Ionicons} name="heart-outline" size="md" color="#262626" />
           )}
         </Button>
-        <Icon ml="2" as={Ionicons} name="chatbubble-outline" size="md" color="#262626" />
+        {/* <Icon ml="2" as={Ionicons} name="chatbubble-outline" size="md" color="#262626" /> */}
       </HStack>
       <VStack space={1} px="3" pb="2" width="100%">
         <Pressable onPress={handleOpenLikers}>
@@ -96,14 +96,14 @@ const Post = ({ navigation, targetPost }) => {
             <Text ml="2">{post.caption}</Text>
           </HStack>
         )}
-        <Pressable>
+        {/* <Pressable>
           <Text fontWeight="light">Voir les X commentaires</Text>
-        </Pressable>
+        </Pressable> */}
         <Text fontWeight="light" fontSize="xs">{Moment(post.created_at).locale('fr').format('LL')}</Text>
       </VStack>
       {
         showLikers && (
-          <Modal
+          <UserModal
             navigation={navigation}
             id={post.id}
             show={showLikers}
